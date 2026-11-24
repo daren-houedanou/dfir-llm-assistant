@@ -9,6 +9,7 @@
 | [essai2-criteres-verdict-kaggle-t4.md](essai2-criteres-verdict-kaggle-t4.md) | Essai 2 : critères de verdict ajoutés au prompt |
 | [essai3-regles-detection-kaggle-t4.md](essai3-regles-detection-kaggle-t4.md) | Essai 3 : nouvelles règles de détection |
 | [holdout-regles-seules.md](holdout-regles-seules.md) | Référence règles seules sur le jeu holdout, jamais utilisé pour écrire les règles |
+| [essai4-holdout-kaggle-t4.md](essai4-holdout-kaggle-t4.md) | Essai 4, jeu holdout : règles seules, Qwen2.5 14B et 7B |
 
 ## Colonnes des tableaux
 
