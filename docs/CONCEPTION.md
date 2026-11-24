@@ -49,7 +49,7 @@ Le nombre de valeurs sensibles retrouvées dans les prompts envoyés au cloud es
 - Les règles écrites à la main généralisent mal : 100 % de verdicts justes sur le jeu de mise au point, 20 % sur le jeu `holdout`. L'étape suivante est d'exécuter les règles Sigma de la communauté (SigmaHQ), par exemple avec `sigma-cli`, et d'en faire des preuves `[F#]`.
 - Sur le jeu `holdout`, le modèle repère deux fois plus d'attaques que les règles (80 % contre 40 % pour le 14B), mais ne conclut jamais `malicious` sans preuve des règles et ne cite pas la bonne technique. Une piste est de l'autoriser à conclure `malicious` à condition de citer la ligne de journal correspondante.
 - Les modèles ne reprennent pas toujours toutes les techniques trouvées par les règles, et peuvent en lister même avec un verdict `benign`.
-- L'analyse mémoire est validée sur un scénario synthétique ; la mesure sur une image réelle (Cridex, `eval/memory`) reste à exécuter.
+- L'analyse mémoire est validée sur un scénario synthétique et une seule image réelle (Cridex, Windows XP). Ce test réel a révélé deux erreurs que le scénario synthétique, écrit avec les mêmes hypothèses que les règles, ne pouvait pas montrer.
 - La pseudonymisation repose sur des expressions régulières et sur les champs structurés : un nom d'hôte cité uniquement dans un texte libre peut lui échapper.
 - Chaque essai d'évaluation a été exécuté une seule fois par modèle ; `dfa eval --repeat` permet de mesurer la variabilité.
 
