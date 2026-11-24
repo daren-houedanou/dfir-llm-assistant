@@ -619,13 +619,22 @@ def windows_memory_phishing() -> None:
         conn(4720, me, 51902, "198.51.100.23", 443, "ESTABLISHED", timedelta(hours=1, minutes=46, seconds=2)),
     ]
 
+    def vol_hexdump(data: bytes) -> str:
+        """Same layout as Volatility 3's JSON renderer: quoted, leading newline, 16 bytes + ASCII per line."""
+        lines = []
+        for i in range(0, len(data), 16):
+            chunk = data[i : i + 16]
+            text = "".join(chr(b) if 0x20 <= b <= 0x7E else "." for b in chunk)
+            lines.append(" ".join(f"{b:02x}" for b in chunk) + " " + text)
+        return '"\n' + "\n".join(lines) + '"'
+
     def region(pid, start, hexdump):
         return {
             "CommitCharge": 16,
             "Disasm": "",
             "End VPN": start + 0xFFFF,
             "File output": "Disabled",
-            "Hexdump": hexdump,
+            "Hexdump": vol_hexdump(bytes.fromhex(hexdump)),
             "Notes": None,
             "PID": pid,
             "PrivateMemory": 1,

@@ -187,6 +187,32 @@ def test_memory_rules_avoid_common_false_positives():
     assert rules.memory_suspicious_connection([internal]) == []
 
 
+def test_volatility_quoted_hexdump_is_parsed(tmp_path):
+    row = {
+        "PID": 1484,
+        "Process": "explorer.exe",
+        "Protection": "PAGE_EXECUTE_READWRITE",
+        "PrivateMemory": 1,
+        "Start VPN": 21364736,
+        "Tag": "VadS",
+        "Hexdump": '"\n4d 5a 90 00 03 00 00 00 MZ......"',
+        "__children": [],
+    }
+    (tmp_path / "malfind.json").write_text(json.dumps([row]))
+    event = next(parsers.parse_file(tmp_path / "malfind.json"))
+    assert event.fields["mz_header"] is True
+
+
+def test_windows_xp_process_tree_is_not_masquerading():
+    xp = [
+        _proc(608, 552, "winlogon.exe"),
+        _proc(652, 608, "services.exe"),
+        _proc(664, 608, "lsass.exe"),
+        _proc(824, 652, "svchost.exe"),
+    ]
+    assert rules.memory_process_tree(xp) == []
+
+
 def test_memory_masquerading_names():
     procs = [
         _proc(640, 504, "services.exe"),

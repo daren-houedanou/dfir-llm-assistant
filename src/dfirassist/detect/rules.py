@@ -684,14 +684,15 @@ DOCUMENT_APPS = {
     "firefox.exe",
     "iexplore.exe",
 }
-# Expected parent of core Windows processes (Windows 10/11). Only checked when the parent is still
-# in the process list: wininit.exe and csrss.exe are started by an smss.exe instance that exits.
+# Expected parents of core Windows processes. Only checked when the parent is still in the process
+# list: wininit.exe and csrss.exe are started by an smss.exe instance that exits. Before Vista
+# (Windows XP, Server 2003) there is no wininit.exe and winlogon.exe starts services.exe and lsass.exe.
 EXPECTED_PARENT = {
-    "svchost.exe": "services.exe",
-    "services.exe": "wininit.exe",
-    "lsass.exe": "wininit.exe",
-    "lsaiso.exe": "wininit.exe",
-    "taskhostw.exe": "svchost.exe",
+    "svchost.exe": {"services.exe"},
+    "services.exe": {"wininit.exe", "winlogon.exe"},
+    "lsass.exe": {"wininit.exe", "winlogon.exe"},
+    "lsaiso.exe": {"wininit.exe"},
+    "taskhostw.exe": {"svchost.exe"},
 }
 CORE_NAMES = set(EXPECTED_PARENT) | {"smss.exe", "csrss.exe", "wininit.exe", "winlogon.exe", "explorer.exe"}
 SINGLETONS = {"lsass.exe", "services.exe", "wininit.exe"}
@@ -793,9 +794,13 @@ def memory_process_tree(events: list[Event]) -> list[Finding]:
         name = str(e.process or "").lower()
         parent = by_pid.get(e.fields.get("ppid"))
         expected = EXPECTED_PARENT.get(name)
-        if expected and parent and str(parent.process).lower() != expected:
+        if expected and parent and str(parent.process).lower() not in expected:
             masquerade.append(
-                (e, f"{e.process} ({e.fields.get('pid')}) started by {parent.process}, expected {expected}")
+                (
+                    e,
+                    f"{e.process} ({e.fields.get('pid')}) started by {parent.process}, "
+                    f"expected {' or '.join(sorted(expected))}",
+                )
             )
         elif name not in CORE_NAMES and any(_edit_distance_1(name, core) for core in CORE_NAMES):
             masquerade.append((e, f"{e.process} ({e.fields.get('pid')}) imitates a Windows process name"))

@@ -19,6 +19,7 @@ The command line is stored under ``CommandLine`` so the generic execution rules 
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
@@ -66,9 +67,17 @@ def _int(value: Any) -> int | None:
         return None
 
 
+HEX_BYTE = re.compile(r"\b[0-9a-fA-F]{2}\b")
+
+
 def _is_mz(hexdump: str | None) -> bool:
-    """True when the region starts with an MZ header, i.e. a whole PE image sits in that memory."""
-    first = (hexdump or "").split()[:2]
+    """True when the region starts with an MZ header, i.e. a whole PE image sits in that memory.
+
+    The JSON renderer of Volatility 3 wraps the hexdump in double quotes and starts it with a
+    newline (``"\\n4d 5a 90 00 ... MZ.."``), so the first two hex bytes are searched for rather
+    than taken from fixed positions.
+    """
+    first = HEX_BYTE.findall(hexdump or "")[:2]
     return [b.lower() for b in first] == ["4d", "5a"]
 
 

@@ -4,7 +4,7 @@
 
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![LLM](https://img.shields.io/badge/LLM-LiteLLM%20%2B%20Ollama-6f42c1)
-![Tests](https://img.shields.io/badge/tests-48%20pytest-brightgreen)
+![Tests](https://img.shields.io/badge/tests-50%20pytest-brightgreen)
 ![Déploiement](https://img.shields.io/badge/d%C3%A9ploiement-Docker%20%7C%20Kubernetes%20%7C%20Nix-326ce5)
 ![Domaine](https://img.shields.io/badge/domaine-DFIR%20%2F%20investigation%20num%C3%A9rique-red)
 
@@ -23,7 +23,7 @@ nix-forensics fournit, dans des versions figées par Nix, les outils qui extraie
 - **Confidentialité** : modèles locaux par défaut, modèle cloud uniquement sur option explicite après pseudonymisation réversible, Ollama sans accès à Internet.
 - **Traçabilité** : journal d'audit chaîné par SHA-256, vérification d'intégrité et rejeu des appels au modèle.
 - **Déploiement** : Docker Compose, manifestes Kubernetes (profil air-gapped et profil hybride, NetworkPolicies en default-deny), paquet et overlay Nix.
-- **Évaluation** : banc comparant chaque modèle aux règles seules (verdict, ATT&CK, indicateurs, questions, fuites, latence), exécuté sur GPU Tesla T4 ; 48 tests et intégration continue GitHub Actions.
+- **Évaluation** : banc comparant chaque modèle aux règles seules (verdict, ATT&CK, indicateurs, questions, fuites, latence), exécuté sur GPU Tesla T4 ; 50 tests et intégration continue GitHub Actions.
 
 ## Ce que fait l'assistant
 
@@ -125,7 +125,7 @@ pip install -e '.[tui]'
 
 dfa triage samples/win-rdp-intrusion        # règles seules, sans modèle
 dfa triage samples/win-memory-phishing      # analyse mémoire (sorties Volatility 3)
-pytest                                      # 48 tests
+pytest                                      # 50 tests
 ```
 
 ### Avec les modèles locaux
@@ -228,6 +228,6 @@ Licence Apache-2.0. Les données d'exemple sont fictives.
 
 ## English summary
 
-This project is an LLM-assisted digital forensics assistant built around [nix-forensics](https://github.com/airbus-cert/nix-forensics), the Nix-packaged toolbox that extracts traces from Windows event logs, the registry, file systems and network captures. It parses tool output (`evtx_dump`, Plaso, Zeek, auth.log, bodyfile, Volatility 3 memory plugins) into a common event model, runs 17 deterministic detection rules mapped to MITRE ATT&CK, and passes the resulting numbered findings, statistics and a token-budgeted timeline to a local model (Qwen2.5 served by Ollama behind a LiteLLM gateway). The model writes a structured incident report, answers analyst questions and drafts hunting queries (Sigma, KQL, SPL, EQL, jq, Zeek). Every answer is checked before display: JSON schema, ATT&CK IDs against a local catalogue, indicators searched in the raw artifacts, queries validated and executed. Case data stays local by default; a cloud model is only reachable with an explicit flag and on a reversibly pseudonymized prompt. Every model call is written to a SHA-256 hash-chained audit log that can be verified and replayed. It ships with Docker Compose, air-gapped and hybrid Kubernetes manifests with default-deny NetworkPolicies, a Nix flake and overlay, 48 pytest tests and GitHub Actions CI.
+This project is an LLM-assisted digital forensics assistant built around [nix-forensics](https://github.com/airbus-cert/nix-forensics), the Nix-packaged toolbox that extracts traces from Windows event logs, the registry, file systems and network captures. It parses tool output (`evtx_dump`, Plaso, Zeek, auth.log, bodyfile, Volatility 3 memory plugins) into a common event model, runs 17 deterministic detection rules mapped to MITRE ATT&CK, and passes the resulting numbered findings, statistics and a token-budgeted timeline to a local model (Qwen2.5 served by Ollama behind a LiteLLM gateway). The model writes a structured incident report, answers analyst questions and drafts hunting queries (Sigma, KQL, SPL, EQL, jq, Zeek). Every answer is checked before display: JSON schema, ATT&CK IDs against a local catalogue, indicators searched in the raw artifacts, queries validated and executed. Case data stays local by default; a cloud model is only reachable with an explicit flag and on a reversibly pseudonymized prompt. Every model call is written to a SHA-256 hash-chained audit log that can be verified and replayed. It ships with Docker Compose, air-gapped and hybrid Kubernetes manifests with default-deny NetworkPolicies, a Nix flake and overlay, 50 pytest tests and GitHub Actions CI.
 
 The model's contribution was measured against a rules-only baseline on annotated scenarios, including 18 real attack recordings from EVTX-ATTACK-SAMPLES, on a Tesla T4 GPU. Adding explicit verdict criteria to the prompt raised Qwen2.5 14B from 12% to 62% correct verdicts on the tuning set, and new rules brought every model to 100%. On 10 held-out recordings never used to write rules, hand-written rules fall to 20% correct verdicts and flag only 40% of attacks; the 14B model flags **80%** (the 7B 70%) but labels them suspicious rather than malicious and does not name the right technique. The model is therefore treated as an analytic aid, never as evidence; the next step is running community Sigma rules as findings. Answers were token-identical across separate GPU sessions.
