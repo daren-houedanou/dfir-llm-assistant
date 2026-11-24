@@ -5,16 +5,24 @@
 # SemperSecurus et listée dans les échantillons de la Volatility Foundation. Les sorties JSON des
 # plugins sont écrites dans data/memory/cridex, lues ensuite par eval/memory/cridex.yaml.
 # Autre image : MEMORY_URL=<lien vers un .zip ou un fichier mémoire> bash scripts/fetch_memory_sample.sh
+# Image déjà présente (par exemple un jeu de données Kaggle) : MEMORY_FILE=<chemin> bash scripts/fetch_memory_sample.sh
 set -euo pipefail
 
-URL=${MEMORY_URL:-http://files.sempersecurus.org/dumps/cridex_memdump.zip}
+# Le site d'origine ne répond plus : la copie de la Wayback Machine est essayée ensuite.
+ORIGIN=http://files.sempersecurus.org/dumps/cridex_memdump.zip
+URLS=${MEMORY_URL:-"$ORIGIN https://web.archive.org/web/2020id_/$ORIGIN"}
 CACHE=${CACHE:-.cache/memory}
 OUT=${OUT:-data/memory/cridex}
 mkdir -p "$CACHE" "$OUT"
 
-IMG=$(find "$CACHE" -maxdepth 2 -type f \( -name '*.vmem' -o -name '*.raw' -o -name '*.mem' -o -name '*.img' \) | head -1)
+IMG=${MEMORY_FILE:-$(find "$CACHE" -maxdepth 2 -type f \( -name '*.vmem' -o -name '*.raw' -o -name '*.mem' -o -name '*.img' \) | head -1)}
 if [ -z "$IMG" ]; then
-  curl -fL --retry 3 -o "$CACHE/sample.download" "$URL"
+  ok=
+  for url in $URLS; do
+    echo "Téléchargement : $url"
+    if curl -fL --retry 2 -o "$CACHE/sample.download" "$url"; then ok=1; break; fi
+  done
+  [ -n "$ok" ] || { echo "Aucun lien n'a fonctionné. Indiquer MEMORY_URL ou MEMORY_FILE." >&2; exit 1; }
   if unzip -tq "$CACHE/sample.download" >/dev/null 2>&1; then
     unzip -o -q "$CACHE/sample.download" -d "$CACHE"
     rm "$CACHE/sample.download"
