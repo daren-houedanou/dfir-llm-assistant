@@ -42,7 +42,8 @@
             pkgs.ruff
             pkgs.evtx # evtx_dump, le même outil que l'evtxTools de nix-forensics
             pkgs.jq
-            pkgs.volatility3 # analyse mémoire : vol -r json -f image.raw windows.pslist
+            # volatility3 n'est pas inclus : sa licence est marquée non libre dans nixpkgs, ce qui
+            # bloque `nix flake check`. L'installer avec `pip install volatility3` si besoin.
             pkgs.kubectl
             pkgs.kustomize
             pkgs.ollama
