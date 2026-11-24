@@ -1,0 +1,59 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e '.[dev]'
+      - run: ruff check src tests samples
+      - run: ruff format --check src tests samples
+      - run: pytest -q
+      - name: Rules-only baseline on synthetic scenarios
+        run: DFA_BACKEND=mock dfa eval eval/scenarios -r eval-report.md && cat eval-report.md >> "$GITHUB_STEP_SUMMARY"
+
+  gateway-integration:
+    # Starts a real LiteLLM proxy with mocked model responses and runs the client against it.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e '.[dev]' 'litellm[proxy]'
+      - name: Start LiteLLM with mock models
+        run: |
+          litellm --config tests/litellm-mock.yaml --port 4011 > litellm.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf localhost:4011/health/readiness && break; sleep 2; done
+      - run: DFA_IT_GATEWAY=http://localhost:4011 DFA_API_KEY=sk-test pytest -q -k integration
+      - if: failure()
+        run: cat litellm.log
+
+  nix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+      - run: nix flake check -L
+      - run: nix build -L .#default && ./result/bin/dfa triage samples/win-rdp-intrusion
+
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Render kustomize overlays
+        run: |
+          kubectl kustomize deploy/k8s/base > /dev/null
+          kubectl kustomize deploy/k8s/overlays/hybrid > /dev/null
+      - name: Validate docker compose file
+        run: LITELLM_MASTER_KEY=x docker compose -f deploy/docker-compose.yml config -q
