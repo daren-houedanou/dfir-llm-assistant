@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+dist/
+result
+.direnv/
+.cache/
+# Public datasets are downloaded and converted locally (GPL, not redistributed)
+data/
+# Secrets
+deploy/.env
+**/secrets.env
+dfa-audit.jsonl
