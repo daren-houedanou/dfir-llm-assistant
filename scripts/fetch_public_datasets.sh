@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
-# Download the public EVTX samples used by eval/public/ and convert them to evtx_dump JSONL.
+# Télécharge les enregistrements EVTX publics utilisés par eval/public et eval/holdout, et les convertit au format JSONL d'evtx_dump.
 #
-# Dataset: https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES (GPL-3.0, not redistributed here).
-# Requires git and either `evtx_dump` (nix-forensics / `nix develop`) or `pip install evtx`.
+# Jeu de données : https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES (GPL-3.0, non redistribué ici).
+# Nécessite git, et soit `evtx_dump` (nix-forensics ou `nix develop`), soit `pip install evtx`.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 CACHE=${CACHE:-.cache/EVTX-ATTACK-SAMPLES}
 if [ ! -d "$CACHE/.git" ]; then
   git clone --depth 1 https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES "$CACHE"
 fi
-# eval/public: the set the rules were tuned on. eval/holdout: samples never looked at while writing rules.
+# eval/public : jeu de mise au point des règles. eval/holdout : enregistrements jamais regardés pour écrire les règles.
 for SET in public holdout; do
   OUT=data/$SET
   mkdir -p "$OUT"
   grep -v '^#' "eval/$SET/FILES.txt" | while IFS= read -r rel; do
     [ -n "$rel" ] && python3 scripts/evtx_to_jsonl.py "$OUT" "$CACHE/$rel"
   done
-  echo "Converted files are in $OUT. Run: dfa eval eval/$SET -m dfir-local -r eval-$SET.md"
+  echo "Fichiers convertis dans $OUT. Lancer : dfa eval eval/$SET -m dfir-local -r eval-$SET.md"
 done

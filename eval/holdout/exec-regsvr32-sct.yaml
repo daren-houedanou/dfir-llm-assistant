@@ -1,6 +1,6 @@
 name: exec-regsvr32-sct
 description: >
-  regsvr32 scriptlet execution (Squiblydoo) (Sysmon).
+  Exécution d'un scriptlet par regsvr32 (Squiblydoo) (Sysmon).
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Execution/exec_sysmon_lobin_regsvr32_sct.evtx
 artifacts:
   - ../../data/holdout/exec_sysmon_lobin_regsvr32_sct.jsonl

@@ -1,15 +1,15 @@
-# LiteLLM gateway configuration (hybrid profile: local + cloud).
+# Configuration de la passerelle LiteLLM (profil hybride : local + cloud).
 #
-# Model aliases are the contract with the client:
-#   dfir-local*  -> self-hosted models (Ollama). Allowed for confidential cases.
-#   dfir-cloud   -> external providers. The client only uses it with --cloud, after pseudonymization.
-# The client keeps the list of local aliases in DFA_LOCAL_MODELS; the gateway enforces the
-# same split with per-team virtual keys (see README "Access control").
+# Les alias de modèles forment le contrat avec le client :
+#   dfir-local*  -> modèles hébergés en local (Ollama). Autorisés pour les dossiers confidentiels.
+#   dfir-cloud   -> fournisseurs externes. Le client ne l'utilise qu'avec --cloud, après pseudonymisation.
+# Le client garde la liste des alias locaux dans DFA_LOCAL_MODELS ; la passerelle applique la
+# même séparation avec des clés virtuelles par équipe (voir docs/CONCEPTION.md, « Confidentialité »).
 #
-# Air-gapped deployments use config.local-only.yaml instead (no cloud alias at all).
+# Les déploiements air-gapped utilisent config.local-only.yaml à la place (aucun alias cloud).
 
 model_list:
-  # --- local, confidential ---------------------------------------------------
+  # --- local, confidentiel ------------------------------------------------------
   - model_name: dfir-local
     litellm_params:
       model: ollama_chat/qwen2.5:7b-instruct
@@ -18,14 +18,14 @@ model_list:
     model_info:
       dfir_policy: local
 
-  - model_name: dfir-local-small        # fallback when the main local model is busy or missing
+  - model_name: dfir-local-small        # repli quand le modèle local principal est occupé ou absent
     litellm_params:
       model: ollama_chat/llama3.2:3b
       api_base: os.environ/OLLAMA_API_BASE
     model_info:
       dfir_policy: local
 
-  # --- cloud, pseudonymized only -----------------------------------------------
+  # --- cloud, uniquement après pseudonymisation -----------------------------------
   - model_name: dfir-cloud
     litellm_params:
       model: anthropic/claude-sonnet-5-5
@@ -33,7 +33,7 @@ model_list:
     model_info:
       dfir_policy: cloud
 
-  - model_name: dfir-cloud-eu           # EU-hosted alternative
+  - model_name: dfir-cloud-eu           # alternative hébergée dans l'UE
     litellm_params:
       model: mistral/mistral-large-latest
       api_key: os.environ/MISTRAL_API_KEY
@@ -44,15 +44,15 @@ router_settings:
   routing_strategy: simple-shuffle
   num_retries: 2
   timeout: 300
-  # Fallbacks never cross the confidentiality boundary: local only falls back to local.
+  # Les replis ne franchissent jamais la frontière de confidentialité : un modèle local ne se replie que sur un modèle local.
   fallbacks:
     - dfir-local: [dfir-local-small]
     - dfir-cloud: [dfir-cloud-eu]
 
 litellm_settings:
-  drop_params: true          # e.g. response_format on models that do not support it
+  drop_params: true          # par exemple response_format sur les modèles qui ne le gèrent pas
   request_timeout: 300
-  # Do not ship prompts (investigation data) to any logging/observability callback.
+  # Ne transmettre les prompts (données d'enquête) à aucun outil de journalisation ou d'observabilité.
   turn_off_message_logging: true
 
 general_settings:

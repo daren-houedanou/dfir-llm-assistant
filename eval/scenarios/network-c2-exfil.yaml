@@ -1,7 +1,7 @@
 name: network-c2-exfil
 description: >
-  Internal workstation beaconing over HTTPS every ~60s to an external host, followed
-  by data exfiltration through DNS TXT queries with long encoded subdomains.
+  Poste interne qui contacte en HTTPS un hôte externe toutes les 60 s environ, puis exfiltration
+  de données par des requêtes DNS TXT aux sous-domaines longs et encodés.
 artifacts:
   - ../../samples/network-c2-exfil
 expected:

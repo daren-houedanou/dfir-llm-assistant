@@ -1,8 +1,8 @@
 name: linux-ssh-compromise
 description: >
-  SSH password attack on a web server, valid account "deploy" compromised, sudo to root,
-  UID 0 backdoor user, payload downloaded to /tmp, reverse shell in root crontab,
-  log file shredded.
+  Attaque SSH par mot de passe sur un serveur web, compte valide « deploy » compromis, sudo vers
+  root, utilisateur porte dérobée d'UID 0, charge téléchargée dans /tmp, reverse shell dans la
+  crontab de root, fichier journal détruit avec shred.
 artifacts:
   - ../../samples/linux-ssh-compromise
 expected:

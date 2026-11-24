@@ -1,6 +1,6 @@
 name: network-service-guest-added-to-admins-4732
 description: >
-  Guest and NETWORK SERVICE added to local Administrators.
+  Guest et NETWORK SERVICE ajoutés aux Administrateurs locaux.
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Persistence/Network_Service_Guest_added_to_admins_4732.evtx
 artifacts:
   - ../../data/public/Network_Service_Guest_added_to_admins_4732.jsonl

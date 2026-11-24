@@ -1,6 +1,6 @@
 name: lm-wmiexec-impacket
 description: >
-  Impacket wmiexec remote execution running whoami (Sysmon).
+  Exécution à distance par wmiexec d'Impacket, qui lance whoami (Sysmon).
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Lateral Movement/LM_wmiexec_impacket_sysmon_whoami.evtx
 artifacts:
   - ../../data/holdout/LM_wmiexec_impacket_sysmon_whoami.jsonl

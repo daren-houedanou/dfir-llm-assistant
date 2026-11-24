@@ -1,6 +1,6 @@
 name: powercat-revshell-sysmon-1-3
 description: >
-  Powercat reverse shell followed by discovery commands.
+  Reverse shell Powercat suivi de commandes de découverte.
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Lateral Movement/powercat_revShell_sysmon_1_3.evtx
 artifacts:
   - ../../data/public/powercat_revShell_sysmon_1_3.jsonl

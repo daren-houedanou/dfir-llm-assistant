@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "dfir-llm-assistant"
 version = "0.1.0"
-description = "LLM-assisted triage, correlation and query generation for DFIR artifacts produced by nix-forensics tools"
+description = "Tri, corrélation et génération de requêtes assistés par LLM pour les artefacts DFIR produits par les outils nix-forensics"
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.11"
@@ -43,4 +43,4 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
-ignore = ["E501"]  # long strings and comments; layout is handled by `ruff format`
+ignore = ["E501"]  # chaînes et commentaires longs ; la mise en forme est gérée par `ruff format`

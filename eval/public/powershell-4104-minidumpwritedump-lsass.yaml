@@ -1,6 +1,6 @@
 name: powershell-4104-minidumpwritedump-lsass
 description: >
-  PowerShell script dumping LSASS through MiniDumpWriteDump.
+  Script PowerShell qui dumpe LSASS via MiniDumpWriteDump.
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Credential Access/Powershell_4104_MiniDumpWriteDump_Lsass.evtx
 artifacts:
   - ../../data/public/Powershell_4104_MiniDumpWriteDump_Lsass.jsonl

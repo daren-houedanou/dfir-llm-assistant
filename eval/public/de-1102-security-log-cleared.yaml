@@ -1,6 +1,6 @@
 name: de-1102-security-log-cleared
 description: >
-  Security log cleared (1102) amid Kerberos activity.
+  Journal Security effacé (1102) au milieu d'une activité Kerberos.
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Defense Evasion/DE_1102_security_log_cleared.evtx
 artifacts:
   - ../../data/public/DE_1102_security_log_cleared.jsonl

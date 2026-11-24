@@ -1,6 +1,6 @@
 name: persist-local-admin-account-sysmon
 description: >
-  Local account created and added to Administrators (Sysmon 12/13).
+  Compte local créé et ajouté aux Administrateurs (Sysmon 12/13).
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Persistence/sysmon_local_account_creation_and_added_admingroup_12_13.evtx
 artifacts:
   - ../../data/holdout/sysmon_local_account_creation_and_added_admingroup_12_13.jsonl

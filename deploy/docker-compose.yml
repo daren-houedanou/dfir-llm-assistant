@@ -1,11 +1,11 @@
-# Local stack for development and demos:  docker compose -f deploy/docker-compose.yml up -d
+# Pile locale pour le développement et les démonstrations :  docker compose -f deploy/docker-compose.yml up -d
 #
-#   ollama-pull   one-shot job: its own temporary Ollama server, with Internet access, downloads the
-#                 models into the shared volume, then exits
-#   ollama        self-hosted models (GPU optional), started after the pull, with no Internet access
-#   litellm       OpenAI-compatible gateway on http://localhost:4000
+#   ollama-pull   tâche ponctuelle : son propre serveur Ollama temporaire, avec accès à Internet, télécharge
+#                 les modèles dans le volume partagé, puis s'arrête
+#   ollama        modèles hébergés en local (GPU facultatif), démarré après le téléchargement, sans accès à Internet
+#   litellm       passerelle compatible OpenAI sur http://localhost:4000
 #
-# Profile: set LITELLM_CONFIG=config.local-only.yaml for a strictly local gateway.
+# Profil : LITELLM_CONFIG=config.local-only.yaml pour une passerelle strictement locale.
 
 name: dfir-llm
 
@@ -15,7 +15,7 @@ services:
     depends_on:
       ollama-pull: { condition: service_completed_successfully }
     environment:
-      # Ollama's default context is 4096 tokens, which truncates dfa prompts (~6000 tokens by default).
+      # Le contexte par défaut d'Ollama est de 4096 tokens, ce qui tronque les prompts de dfa (environ 6000 tokens par défaut).
       OLLAMA_CONTEXT_LENGTH: ${OLLAMA_CONTEXT_LENGTH:-8192}
     volumes:
       - ollama:/root/.ollama
@@ -24,15 +24,15 @@ services:
       test: ["CMD", "ollama", "list"]
       interval: 10s
       retries: 30
-    # Uncomment on a host with an NVIDIA GPU and the container toolkit:
+    # À décommenter sur une machine avec un GPU NVIDIA et le NVIDIA Container Toolkit :
     # deploy:
     #   resources:
     #     reservations:
     #       devices: [{ driver: nvidia, count: all, capabilities: [gpu] }]
 
   ollama-pull:
-    # The download is done by the Ollama *server*, so the pull needs a server that can reach the
-    # Internet. Running a separate, short-lived one keeps the serving instance offline.
+    # C'est le *serveur* Ollama qui télécharge : il faut donc un serveur qui accède à Internet.
+    # En lancer un séparé et temporaire permet de garder hors ligne celui qui sert les modèles.
     image: ollama/ollama:0.12.6
     volumes:
       - ollama:/root/.ollama
@@ -58,7 +58,7 @@ services:
     volumes:
       - ./litellm:/etc/litellm:ro
     ports:
-      - "127.0.0.1:4000:4000"   # loopback only: the gateway is not exposed on the LAN
+      - "127.0.0.1:4000:4000"   # boucle locale uniquement : la passerelle n'est pas exposée sur le réseau
     depends_on:
       ollama: { condition: service_healthy }
     networks: [internal, egress]
@@ -68,5 +68,5 @@ volumes:
 
 networks:
   internal:
-    internal: true   # ollama has no route to the Internet
+    internal: true   # ollama n'a aucune route vers Internet
   egress: {}

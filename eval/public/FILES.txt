@@ -1,4 +1,4 @@
-# Files converted by scripts/fetch_public_datasets.sh (source path in EVTX-ATTACK-SAMPLES)
+# Fichiers convertis par scripts/fetch_public_datasets.sh (chemin dans EVTX-ATTACK-SAMPLES)
 Defense Evasion/DE_1102_security_log_cleared.evtx
 Defense Evasion/DE_104_system_log_cleared.evtx
 Defense Evasion/DE_Fake_ComputerAccount_4720.evtx

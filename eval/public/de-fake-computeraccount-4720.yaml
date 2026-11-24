@@ -1,6 +1,6 @@
 name: de-fake-computeraccount-4720
 description: >
-  Account ending with $ created to look like a computer account.
+  Compte se terminant par $ créé pour ressembler à un compte machine.
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Defense Evasion/DE_Fake_ComputerAccount_4720.evtx
 artifacts:
   - ../../data/public/DE_Fake_ComputerAccount_4720.jsonl

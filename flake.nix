@@ -1,5 +1,5 @@
 {
-  description = "dfir-llm-assistant: LLM-assisted DFIR triage for nix-forensics artifacts";
+  description = "dfir-llm-assistant : assistant LLM pour l'analyse forensique des artefacts nix-forensics";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
 
@@ -18,10 +18,10 @@
           build-system = [ py.hatchling ];
           dependencies = with py; [ httpx pyyaml rich typer textual ];
           nativeCheckInputs = [ py.pytestCheckHook py.pytest-asyncio pkgs.jq ];
-          # evtx_dump (raw .evtx parsing) and jq (query validation) are used at runtime.
+          # evtx_dump (lecture des .evtx bruts) et jq (validation des requêtes) sont utilisés à l'exécution.
           makeWrapperArgs = [ "--prefix" "PATH" ":" (pkgs.lib.makeBinPath [ pkgs.evtx pkgs.jq ]) ];
           meta = {
-            description = "LLM-assisted triage, correlation and query generation for DFIR artifacts";
+            description = "Tri, corrélation et génération de requêtes assistés par LLM pour les artefacts DFIR";
             license = pkgs.lib.licenses.asl20;
             mainProgram = "dfa";
           };
@@ -34,13 +34,13 @@
         default = { type = "app"; program = "${self.packages.${pkgs.system}.default}/bin/dfa"; };
       });
 
-      # Analyst / developer shell: the assistant plus the tools whose output it consumes.
+      # Shell analyste et développeur : l'assistant et les outils dont il lit les sorties.
       devShells = forAllSystems (pkgs: {
         default = pkgs.mkShell {
           packages = [
             (pkgs.python3.withPackages (ps: with ps; [ httpx pyyaml rich typer textual pytest pytest-asyncio ]))
             pkgs.ruff
-            pkgs.evtx # evtx_dump, the same tool nix-forensics ships as evtxTools
+            pkgs.evtx # evtx_dump, le même outil que l'evtxTools de nix-forensics
             pkgs.jq
             pkgs.kubectl
             pkgs.kustomize
@@ -54,7 +54,7 @@
         };
       });
 
-      # Drop-in for nix-forensics or a NixOS config: nixpkgs.overlays = [ dfir-llm-assistant.overlays.default ];
+      # À ajouter à nix-forensics ou à une configuration NixOS : nixpkgs.overlays = [ dfir-llm-assistant.overlays.default ];
       overlays.default = final: prev: { dfir-llm-assistant = mkPackage final; };
     };
 }

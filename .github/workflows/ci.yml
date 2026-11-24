@@ -23,7 +23,7 @@ jobs:
         run: DFA_BACKEND=mock dfa eval eval/scenarios -r eval-report.md && cat eval-report.md >> "$GITHUB_STEP_SUMMARY"
 
   gateway-integration:
-    # Starts a real LiteLLM proxy with mocked model responses and runs the client against it.
+    # Lance un vrai proxy LiteLLM avec des réponses de modèle simulées et y connecte le client.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -1,6 +1,6 @@
 name: lm-remote-service02-7045
 description: >
-  Services installed remotely on the target host (PsExec-like lateral movement).
+  Services installés à distance sur l'hôte cible (mouvement latéral de type PsExec).
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Lateral Movement/LM_Remote_Service02_7045.evtx
 artifacts:
   - ../../data/public/LM_Remote_Service02_7045.jsonl

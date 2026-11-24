@@ -1,4 +1,4 @@
-# Base = air-gapped profile: local models only, no egress from the gateway.
+# Base = profil air-gapped : modèles locaux uniquement, aucune sortie depuis la passerelle.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: dfir-ai
@@ -12,4 +12,4 @@ resources:
 configMapGenerator:
   - name: litellm-config
     files:
-      - config.yaml=litellm-config.yaml  # copy of deploy/litellm/config.local-only.yaml, kept in sync by tests
+      - config.yaml=litellm-config.yaml  # copie de deploy/litellm/config.local-only.yaml, synchronisation vérifiée par les tests

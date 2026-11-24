@@ -7,7 +7,7 @@ spec:
   podSelector: { matchLabels: { app.kubernetes.io/name: litellm } }
   policyTypes: [Egress]
   egress:
-    # Tighten to provider CIDRs or route through an egress proxy in production.
+    # En production, restreindre aux plages IP des fournisseurs ou passer par un proxy de sortie.
     - to:
         - ipBlock: { cidr: 0.0.0.0/0, except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16] }
       ports:

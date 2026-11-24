@@ -1,6 +1,6 @@
 name: de-104-system-log-cleared
 description: >
-  System log cleared (104).
+  Journal System effacé (104).
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Defense Evasion/DE_104_system_log_cleared.evtx
 artifacts:
   - ../../data/public/DE_104_system_log_cleared.jsonl

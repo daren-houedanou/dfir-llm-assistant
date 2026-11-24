@@ -1,8 +1,9 @@
 name: win-rdp-intrusion
 description: >
-  External RDP brute force on a finance workstation, successful logon as the local
-  administrator, discovery commands (whoami, net, nltest), backdoor account added to Administrators, encoded PowerShell download
-  cradle installed as a service, then Security log cleared.
+  Force brute RDP externe sur un poste du service financier, connexion réussie en administrateur
+  local, commandes de découverte (whoami, net, nltest), compte porte dérobée ajouté aux
+  Administrateurs, téléchargeur PowerShell encodé installé comme service, puis journal Security
+  effacé.
 artifacts:
   - ../../samples/win-rdp-intrusion
 expected:

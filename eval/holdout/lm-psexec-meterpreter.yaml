@@ -1,6 +1,6 @@
 name: lm-psexec-meterpreter
 description: >
-  PsExec-style service execution over SMB delivering Meterpreter (Sysmon).
+  Exécution d'un service à la manière de PsExec via SMB, qui livre Meterpreter (Sysmon).
   Source: sbousseaden/EVTX-ATTACK-SAMPLES, Lateral Movement/LM_sysmon_psexec_smb_meterpreter.evtx
 artifacts:
   - ../../data/holdout/LM_sysmon_psexec_smb_meterpreter.jsonl

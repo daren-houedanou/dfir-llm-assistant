@@ -1,5 +1,5 @@
-# Air-gapped profile: only self-hosted models are exposed. Nothing can reach a cloud provider,
-# whatever the client asks for.
+# Profil air-gapped : seuls les modèles hébergés en local sont exposés. Rien ne peut atteindre un
+# fournisseur cloud, quoi que demande le client.
 model_list:
   - model_name: dfir-local
     litellm_params:

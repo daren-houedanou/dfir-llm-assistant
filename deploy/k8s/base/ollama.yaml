@@ -15,7 +15,7 @@ metadata:
   labels: { app.kubernetes.io/name: ollama }
 spec:
   replicas: 1
-  strategy: { type: Recreate }   # RWO volume
+  strategy: { type: Recreate }   # volume RWO
   selector:
     matchLabels: { app.kubernetes.io/name: ollama }
   template:
@@ -42,7 +42,7 @@ spec:
           resources:
             requests: { cpu: "2", memory: 8Gi }
             limits: { memory: 16Gi }
-            # On GPU nodes (NVIDIA device plugin):
+            # Sur des nœuds GPU (NVIDIA device plugin) :
             # limits: { nvidia.com/gpu: 1 }
           securityContext:
             allowPrivilegeEscalation: false
@@ -62,8 +62,8 @@ spec:
   ports:
     - { name: http, port: 11434, targetPort: http }
 ---
-# One-shot model download. In an air-gapped cluster, pre-load the PVC instead
-# (e.g. from an internal registry or an OCI artifact) and delete this Job.
+# Téléchargement ponctuel des modèles. Dans un cluster air-gapped, pré-charger plutôt le PVC
+# (depuis un registre interne ou un artefact OCI, par exemple) et supprimer ce Job.
 apiVersion: batch/v1
 kind: Job
 metadata:

@@ -1,4 +1,4 @@
-# Default deny: nothing in the namespace talks to anything unless allowed below.
+# Refus par défaut : rien dans le namespace ne communique, sauf ce qui est autorisé ci-dessous.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -7,7 +7,7 @@ spec:
   podSelector: {}
   policyTypes: [Ingress, Egress]
 ---
-# Everyone may resolve DNS.
+# Tous les pods peuvent faire des résolutions DNS.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -23,7 +23,7 @@ spec:
         - { protocol: UDP, port: 53 }
         - { protocol: TCP, port: 53 }
 ---
-# Ollama only accepts traffic from the gateway and the pull job, and has no egress.
+# Ollama n'accepte que le trafic de la passerelle et du Job de téléchargement, et n'a aucune sortie.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -38,7 +38,7 @@ spec:
       ports:
         - { protocol: TCP, port: 11434 }
 ---
-# The gateway may reach Ollama. Cloud egress is added only by the hybrid overlay.
+# La passerelle peut joindre Ollama. La sortie vers le cloud n'est ajoutée que par l'overlay hybride.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -52,7 +52,7 @@ spec:
       ports:
         - { protocol: TCP, port: 11434 }
 ---
-# Analysts' clients (namespace labelled dfir-ai/client=true, or an ingress controller) reach the gateway.
+# Les clients des analystes (namespace étiqueté dfir-ai/client=true, ou un ingress controller) joignent la passerelle.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -67,7 +67,7 @@ spec:
       ports:
         - { protocol: TCP, port: 4000 }
 ---
-# The pull job may reach the model registry over HTTPS (remove in air-gapped clusters).
+# Le Job de téléchargement peut joindre le registre de modèles en HTTPS (à retirer dans un cluster air-gapped).
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
