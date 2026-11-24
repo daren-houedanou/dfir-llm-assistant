@@ -1,0 +1,14 @@
+# LiteLLM proxy config with mocked model answers, used by the gateway-integration CI job.
+model_list:
+  - model_name: dfir-local
+    litellm_params:
+      model: openai/fake-local
+      api_key: fake
+      mock_response: '{"summary":"RDP brute force from 203.0.113.45 then admin logon.","verdict":"malicious","confidence":"high","timeline":[],"techniques":[{"id":"T1110.001","name":"Password Guessing","evidence":"[F1]"}],"iocs":[{"type":"ip","value":"203.0.113.45"},{"type":"ip","value":"6.6.6.6"}],"next_steps":["isolate host"]}'
+  - model_name: dfir-cloud
+    litellm_params:
+      model: openai/fake-cloud
+      api_key: fake
+      mock_response: '{"summary":"Attack by IP_PUB_1 on HOST_1 as USER_1.","verdict":"malicious","confidence":"high","timeline":[],"techniques":[],"iocs":[{"type":"ip","value":"IP_PUB_1"}],"next_steps":[]}'
+general_settings:
+  master_key: sk-test
