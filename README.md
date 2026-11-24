@@ -88,6 +88,7 @@ Le modèle ne remplace pas la détection : il reçoit les preuves des règles et
 | `eval/scenarios` | 5 scénarios synthétiques : intrusion RDP, compromission SSH, C2 et exfiltration DNS, document Word piégé vu en mémoire, journée normale | valider la chaîne, mesurer les fausses alertes |
 | `eval/public` | 8 enregistrements [EVTX-ATTACK-SAMPLES](https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES) | mise au point |
 | `eval/holdout` | 10 autres enregistrements, jamais utilisés pour écrire une règle | mesure de la généralisation |
+| `eval/memory` | image mémoire réelle d'un poste infecté par Cridex, analysée par Volatility 3 (`scripts/fetch_memory_sample.sh`) | valider l'analyse mémoire sur une vraie machine |
 
 Verdicts justes sur le jeu public (Qwen2.5 sur Tesla T4, température 0, graine fixe) :
 
@@ -203,7 +204,7 @@ dfir-llm-assistant/
 - Le modèle est une **aide à l'analyse, pas une preuve** : les constats d'un rapport doivent venir des règles et des artefacts, rejouables à l'identique.
 - Les règles écrites à la main généralisent mal (20 % sur le jeu `holdout`), et le modèle ne compense qu'en partie : il repère plus d'attaques mais sans les nommer. Piste : exécuter les règles [Sigma](https://github.com/SigmaHQ/sigma) de la communauté via `sigma-cli` et en faire des preuves `[F#]`.
 - Avec les critères de verdict, le modèle ne dépasse pas `suspicious` sans preuve des règles. Piste : l'autoriser à conclure `malicious` s'il cite la ligne de journal correspondante.
-- L'analyse mémoire lit les sorties de Volatility 3 mais ne lance pas Volatility elle-même, et n'est validée que sur un scénario synthétique. Piste : la mesurer sur des images mémoire publiques et avec les modèles.
+- L'analyse mémoire lit les sorties de Volatility 3 mais ne lance pas Volatility elle-même. Elle est validée sur un scénario synthétique ; la mesure sur l'image Cridex (`eval/memory`) reste à exécuter sur GPU.
 - La pseudonymisation repose sur des expressions régulières et des champs connus : un nom de machine cité dans un texte libre peut lui échapper.
 - Pistes : appels d'outils pour que le modèle demande lui-même un artefact (regipy, plugin Volatility), vLLM à la place d'Ollama en production, évaluation des résumés par un modèle juge.
 

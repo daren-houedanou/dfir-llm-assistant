@@ -1,0 +1,12 @@
+name: memory-cridex
+description: >
+  Image mémoire réelle d'un poste Windows XP SP2 infecté par Cridex, cheval de Troie bancaire. Le
+  code malveillant est injecté dans explorer.exe et dans reader_sl.exe, qui contactent ensuite leurs
+  serveurs de commande et contrôle.
+  Source : SemperSecurus, image listée dans les échantillons mémoire de la Volatility Foundation.
+artifacts:
+  - ../../data/memory/cridex
+expected:
+  verdict: malicious
+  techniques: [T1055]
+  iocs: [reader_sl.exe]
