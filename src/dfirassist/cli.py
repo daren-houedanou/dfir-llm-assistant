@@ -28,7 +28,7 @@ console = Console()
 err = Console(stderr=True)
 
 Files = Annotated[list[Path], typer.Argument(exists=True, help="Artifact files or directories")]
-Fmt = Annotated[str | None, typer.Option("--format", "-f", help="Force parser: evtx, linux, timeline, zeek")]
+Fmt = Annotated[str | None, typer.Option("--format", "-f", help="Force parser: evtx, linux, timeline, zeek, memory")]
 Cloud = Annotated[bool, typer.Option("--cloud", help="Allow a cloud model (prompt is pseudonymized first)")]
 Model = Annotated[
     str | None, typer.Option("--model", "-m", help="LiteLLM model alias (default: DFA_LOCAL_MODEL)")

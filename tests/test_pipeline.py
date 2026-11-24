@@ -37,6 +37,8 @@ def mock_client(**kw) -> LLMClient:
         (SAMPLES / "linux-ssh-compromise/auth.log", "linux"),
         (SAMPLES / "linux-ssh-compromise/timeline.body", "timeline"),
         (SAMPLES / "network-c2-exfil/conn.log", "zeek"),
+        (SAMPLES / "win-memory-phishing/windows.pslist.json", "memory"),
+        (SAMPLES / "win-memory-phishing/windows.malfind.json", "memory"),
     ],
 )
 def test_format_detection(path, fmt):
@@ -108,6 +110,92 @@ def test_rules_linux():
 
 def test_rules_network():
     assert {"T1071.001", "T1071.004", "T1048"} <= _techniques("network-c2-exfil")
+
+
+def test_rules_memory():
+    assert {"T1204.002", "T1059.001", "T1027", "T1105", "T1036.005", "T1055", "T1071.001"} <= _techniques(
+        "win-memory-phishing"
+    )
+
+
+def test_volatility_pstree_and_jsonl(tmp_path):
+    tree = [
+        {
+            "PID": 2164,
+            "PPID": 2140,
+            "ImageFileName": "explorer.exe",
+            "CreateTime": "2026-01-01T09:00:00",
+            "__children": [
+                {
+                    "PID": 3412,
+                    "PPID": 2164,
+                    "ImageFileName": "WINWORD.EXE",
+                    "CreateTime": None,
+                    "__children": [
+                        {
+                            "PID": 4720,
+                            "PPID": 3412,
+                            "ImageFileName": "cmd.exe",
+                            "CreateTime": None,
+                            "__children": [],
+                        }
+                    ],
+                }
+            ],
+        }
+    ]
+    (tmp_path / "pstree.json").write_text("\n" + json.dumps(tree, indent=2, sort_keys=True))
+    (tmp_path / "pstree.jsonl").write_text(json.dumps(tree[0], sort_keys=True) + "\n")
+    for name in ("pstree.json", "pstree.jsonl"):
+        events = list(parsers.parse_file(tmp_path / name))
+        assert [e.fields["pid"] for e in events] == [2164, 3412, 4720]
+        assert parsers.detect_format(tmp_path / name) == "memory"
+    finding = rules.memory_process_tree(events)[0]
+    assert finding.techniques == ["T1059.003", "T1204.002"]
+
+
+def _proc(pid, ppid, name, exited=False) -> Event:
+    return Event(
+        None,
+        "memory",
+        "memory/process",
+        process=name,
+        fields={"pid": pid, "ppid": ppid, "exit_time": "x" if exited else None},
+    )
+
+
+def test_memory_rules_avoid_common_false_positives():
+    normal = [
+        _proc(504, 420, "wininit.exe"),
+        _proc(640, 504, "services.exe"),
+        _proc(652, 504, "lsass.exe"),
+        _proc(788, 640, "svchost.exe"),
+        _proc(2164, 2140, "explorer.exe"),
+        _proc(3100, 2164, "chrome.exe"),
+        _proc(3200, 3100, "chrome.exe"),
+    ]
+    assert rules.memory_process_tree(normal) == []
+    jit = Event(
+        None,
+        "memory",
+        "memory/malfind",
+        process="chrome.exe",
+        fields={"pid": 3100, "protection": "PAGE_EXECUTE_READWRITE", "mz_header": False},
+    )
+    assert rules.memory_code_injection([jit])[0].severity == "medium"
+    internal = Event(None, "memory", "memory/netconn", dst_ip="10.0.0.5", dst_port=445, process="cmd.exe")
+    assert rules.memory_suspicious_connection([internal]) == []
+
+
+def test_memory_masquerading_names():
+    procs = [
+        _proc(640, 504, "services.exe"),
+        _proc(900, 640, "svch0st.exe"),
+        _proc(652, 504, "lsass.exe"),
+        _proc(990, 640, "lsass.exe"),
+    ]
+    text = rules.memory_process_tree(procs)[0].description
+    assert "svch0st.exe" in text and "2 running lsass.exe" in text
 
 
 def test_rules_no_false_positive_on_benign():
@@ -327,7 +415,7 @@ def test_score_techniques():
 
 def test_eval_suite_rules_baseline():
     results = run_suite(ROOT / "eval/scenarios", models=[])
-    assert len(results) == 4 and all(r.error is None for r in results)
+    assert len(results) == 5 and all(r.error is None for r in results)
     assert all(r.verdict_ok for r in results)
     assert all(r.leaks == 0 for r in results)
 

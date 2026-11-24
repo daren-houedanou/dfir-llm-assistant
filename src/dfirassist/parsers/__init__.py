@@ -9,10 +9,11 @@ from collections.abc import Iterable, Iterator
 from pathlib import Path
 
 from ..models import Event
-from . import evtx, linux, timeline, zeek
+from . import evtx, linux, memory, timeline, zeek
 
 PARSERS = {
     "evtx": evtx,
+    "memory": memory,
     "zeek": zeek,
     "timeline": timeline,
     "linux": linux,
@@ -37,7 +38,7 @@ def detect_format(path: Path) -> str:
             return name
     raise UnknownFormatError(
         f"{path}: unknown format. Supported: evtx_dump JSON/JSONL, Linux auth/syslog, "
-        "bodyfile, Plaso l2tcsv, Zeek TSV/JSON. Force one with --format."
+        "bodyfile, Plaso l2tcsv, Zeek TSV/JSON, Volatility 3 JSON. Force one with --format."
     )
 
 

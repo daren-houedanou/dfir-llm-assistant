@@ -1,0 +1,17 @@
+name: win-memory-phishing
+description: >
+  Analyse mémoire (Volatility 3) d'un poste compromis par un document Word piégé : WINWORD.EXE lance
+  un PowerShell encodé qui télécharge une charge, la charge tourne sous un faux svchost.exe depuis
+  le dossier Temp, garde une connexion de commande et contrôle et injecte un exécutable dans
+  explorer.exe. Bruit : une zone JIT légitime de Chrome.
+artifacts:
+  - ../../samples/win-memory-phishing
+expected:
+  verdict: malicious
+  techniques: [T1204.002, T1059.001, T1027, T1105, T1036.005, T1055, T1071.001]
+  iocs: [198.51.100.23, http://198.51.100.23/stage2.ps1]
+questions:
+  - q: Which process started the attack chain?
+    expect_any: [winword, word]
+  - q: Into which process was code injected?
+    expect_any: [explorer.exe, explorer]

@@ -1,0 +1,107 @@
+
+[
+  {
+    "Created": "2026-10-20T07:58:18+00:00",
+    "ForeignAddr": "0.0.0.0",
+    "ForeignPort": 0,
+    "LocalAddr": "0.0.0.0",
+    "LocalPort": 135,
+    "Offset": 3305111687,
+    "Owner": "svchost.exe",
+    "PID": 788,
+    "Proto": "TCPv4",
+    "State": "LISTENING",
+    "__children": []
+  },
+  {
+    "Created": "2026-10-20T07:58:17+00:00",
+    "ForeignAddr": "0.0.0.0",
+    "ForeignPort": 0,
+    "LocalAddr": "0.0.0.0",
+    "LocalPort": 49664,
+    "Offset": 3305161216,
+    "Owner": "lsass.exe",
+    "PID": 652,
+    "Proto": "TCPv4",
+    "State": "LISTENING",
+    "__children": []
+  },
+  {
+    "Created": "2026-10-20T08:00:12+00:00",
+    "ForeignAddr": "10.30.0.10",
+    "ForeignPort": 445,
+    "LocalAddr": "10.30.2.41",
+    "LocalPort": 50112,
+    "Offset": 3305161664,
+    "Owner": "svchost.exe",
+    "PID": 1024,
+    "Proto": "TCPv4",
+    "State": "ESTABLISHED",
+    "__children": []
+  },
+  {
+    "Created": "2026-10-20T08:00:12+00:00",
+    "ForeignAddr": "203.0.113.80",
+    "ForeignPort": 443,
+    "LocalAddr": "10.30.2.41",
+    "LocalPort": 50340,
+    "Offset": 3305161892,
+    "Owner": "OneDrive.exe",
+    "PID": 3020,
+    "Proto": "TCPv4",
+    "State": "ESTABLISHED",
+    "__children": []
+  },
+  {
+    "Created": "2026-10-20T08:56:12+00:00",
+    "ForeignAddr": "203.0.113.15",
+    "ForeignPort": 443,
+    "LocalAddr": "10.30.2.41",
+    "LocalPort": 51022,
+    "Offset": 3305162574,
+    "Owner": "chrome.exe",
+    "PID": 3100,
+    "Proto": "TCPv4",
+    "State": "ESTABLISHED",
+    "__children": []
+  },
+  {
+    "Created": "2026-10-20T09:42:55+00:00",
+    "ForeignAddr": "198.51.100.23",
+    "ForeignPort": 80,
+    "LocalAddr": "10.30.2.41",
+    "LocalPort": 51877,
+    "Offset": 3305163429,
+    "Owner": "powershell.exe",
+    "PID": 4720,
+    "Proto": "TCPv4",
+    "State": "CLOSED",
+    "__children": []
+  },
+  {
+    "Created": "2026-10-20T09:43:37+00:00",
+    "ForeignAddr": "198.51.100.23",
+    "ForeignPort": 8443,
+    "LocalAddr": "10.30.2.41",
+    "LocalPort": 51890,
+    "Offset": 3305163442,
+    "Owner": "svchost.exe",
+    "PID": 5120,
+    "Proto": "TCPv4",
+    "State": "ESTABLISHED",
+    "__children": []
+  },
+  {
+    "Created": "2026-10-20T09:44:14+00:00",
+    "ForeignAddr": "198.51.100.23",
+    "ForeignPort": 443,
+    "LocalAddr": "10.30.2.41",
+    "LocalPort": 51902,
+    "Offset": 3305163454,
+    "Owner": "powershell.exe",
+    "PID": 4720,
+    "Proto": "TCPv4",
+    "State": "ESTABLISHED",
+    "__children": []
+  }
+]

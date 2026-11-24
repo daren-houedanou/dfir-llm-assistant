@@ -9,6 +9,7 @@ evaluation harness measures both the rules alone and rules + LLM.
 from __future__ import annotations
 
 import base64
+import ipaddress
 import math
 import re
 import statistics
@@ -17,6 +18,7 @@ from collections.abc import Callable
 from datetime import timedelta
 
 from ..models import SEVERITY_ORDER, Event, Finding
+from ..privacy import INTERNAL_NETS
 
 Rule = Callable[[list[Event]], list[Finding]]
 RULES: list[Rule] = []
@@ -655,9 +657,215 @@ def staging_files(events: list[Event]) -> list[Finding]:
     ]
 
 
+# --------------------------------------------------------------------------- memory (Volatility 3)
+
+SHELLS = {
+    "cmd.exe",
+    "powershell.exe",
+    "pwsh.exe",
+    "wscript.exe",
+    "cscript.exe",
+    "mshta.exe",
+    "rundll32.exe",
+    "regsvr32.exe",
+    "certutil.exe",
+    "bitsadmin.exe",
+}
+DOCUMENT_APPS = {
+    "winword.exe",
+    "excel.exe",
+    "powerpnt.exe",
+    "outlook.exe",
+    "msaccess.exe",
+    "acrord32.exe",
+    "acrobat.exe",
+    "chrome.exe",
+    "msedge.exe",
+    "firefox.exe",
+    "iexplore.exe",
+}
+# Expected parent of core Windows processes (Windows 10/11). Only checked when the parent is still
+# in the process list: wininit.exe and csrss.exe are started by an smss.exe instance that exits.
+EXPECTED_PARENT = {
+    "svchost.exe": "services.exe",
+    "services.exe": "wininit.exe",
+    "lsass.exe": "wininit.exe",
+    "lsaiso.exe": "wininit.exe",
+    "taskhostw.exe": "svchost.exe",
+}
+CORE_NAMES = set(EXPECTED_PARENT) | {"smss.exe", "csrss.exe", "wininit.exe", "winlogon.exe", "explorer.exe"}
+SINGLETONS = {"lsass.exe", "services.exe", "wininit.exe"}
+LOLBIN_TECHNIQUE = {"rundll32.exe": "T1218.011", "regsvr32.exe": "T1218.010", "mshta.exe": "T1218.005"}
+
+
+def _edit_distance_1(a: str, b: str) -> bool:
+    """True when a and b differ by exactly one insertion, deletion, substitution or swap."""
+    if a == b or abs(len(a) - len(b)) > 1:
+        return False
+    if len(a) == len(b):
+        diff = [i for i in range(len(a)) if a[i] != b[i]]
+        return len(diff) == 1 or (
+            len(diff) == 2
+            and diff[1] == diff[0] + 1
+            and a[diff[0]] == b[diff[1]]
+            and a[diff[1]] == b[diff[0]]
+        )
+    short, long_ = sorted((a, b), key=len)
+    return any(long_[:i] + long_[i + 1 :] == short for i in range(len(long_)))
+
+
+def _shell_technique(name: str) -> str:
+    if name in ("powershell.exe", "pwsh.exe"):
+        return "T1059.001"
+    if name == "cmd.exe":
+        return "T1059.003"
+    return LOLBIN_TECHNIQUE.get(name, "T1059")
+
+
+@rule
+def memory_code_injection(events: list[Event]) -> list[Finding]:
+    """Executable and writable private memory found by malfind: shellcode or an injected PE.
+
+    RWX regions also exist in legitimate JIT runtimes (browsers, .NET), so only a region that starts
+    with an MZ header is rated high.
+    """
+    hits = [
+        e
+        for e in _of_type(events, "memory/malfind")
+        if "EXECUTE_READWRITE" in str(e.fields.get("protection", "")).upper()
+    ]
+    if not hits:
+        return []
+    with_pe = [e for e in hits if e.fields.get("mz_header")]
+    procs = sorted({f"{e.process} ({e.fields.get('pid')})" for e in hits})
+    desc = f"{len(hits)} executable and writable memory region(s) in {', '.join(procs[:5])}."
+    if with_pe:
+        desc += (
+            f" {len(with_pe)} start with an MZ header: a whole executable was loaded without a file on disk."
+        )
+    return [
+        Finding(
+            rule="memory_code_injection",
+            title="Code injected in process memory",
+            severity="high" if with_pe else "medium",
+            techniques=["T1055"],
+            description=desc,
+            evidence=(with_pe or hits)[:6],
+            indicators={"process": sorted({str(e.process) for e in hits})},
+        )
+    ]
+
+
+@rule
+def memory_process_tree(events: list[Event]) -> list[Finding]:
+    """Abnormal parent/child relations and look-alike names in the process list."""
+    procs = _of_type(events, "memory/process")
+    if not procs:
+        return []
+    by_pid = {e.fields.get("pid"): e for e in procs}
+    findings = []
+
+    spawned = []
+    for e in procs:
+        parent = by_pid.get(e.fields.get("ppid"))
+        child, pname = str(e.process or "").lower(), str(parent.process if parent else "").lower()
+        if parent and pname in DOCUMENT_APPS and child in SHELLS:
+            spawned.append((parent, e))
+    if spawned:
+        techniques = {"T1204.002"} | {_shell_technique(str(c.process).lower()) for _, c in spawned}
+        findings.append(
+            Finding(
+                rule="memory_process_tree",
+                title="Document or browser process spawned a shell",
+                severity="high",
+                techniques=sorted(techniques),
+                description="; ".join(
+                    f"{p.process} ({p.fields.get('pid')}) -> {c.process} ({c.fields.get('pid')})"
+                    for p, c in spawned[:5]
+                ),
+                evidence=[x for pair in spawned[:4] for x in pair],
+                indicators={"process": sorted({str(c.process) for _, c in spawned})},
+            )
+        )
+
+    masquerade = []
+    for e in procs:
+        name = str(e.process or "").lower()
+        parent = by_pid.get(e.fields.get("ppid"))
+        expected = EXPECTED_PARENT.get(name)
+        if expected and parent and str(parent.process).lower() != expected:
+            masquerade.append(
+                (e, f"{e.process} ({e.fields.get('pid')}) started by {parent.process}, expected {expected}")
+            )
+        elif name not in CORE_NAMES and any(_edit_distance_1(name, core) for core in CORE_NAMES):
+            masquerade.append((e, f"{e.process} ({e.fields.get('pid')}) imitates a Windows process name"))
+    counts = Counter(str(e.process or "").lower() for e in procs if not e.fields.get("exit_time"))
+    for name in SINGLETONS:
+        if counts[name] > 1:
+            dupes = [e for e in procs if str(e.process).lower() == name]
+            masquerade.append((dupes[-1], f"{counts[name]} running {name} processes, only one is expected"))
+    if masquerade:
+        findings.append(
+            Finding(
+                rule="memory_process_tree",
+                title="Process masquerading as a Windows system process",
+                severity="high",
+                techniques=["T1036.005"],
+                description="; ".join(text for _, text in masquerade[:5]),
+                evidence=[e for e, _ in masquerade[:6]],
+                indicators={"process": sorted({str(e.process) for e, _ in masquerade})},
+            )
+        )
+    return findings
+
+
+@rule
+def memory_suspicious_connection(events: list[Event]) -> list[Finding]:
+    """Shells and proxy binaries holding a connection to a public address (reverse shell, C2, download)."""
+    hits = []
+    for e in _of_type(events, "memory/netconn"):
+        if str(e.process or "").lower() not in SHELLS or not e.dst_ip or not e.dst_port:
+            continue
+        try:
+            ip = ipaddress.ip_address(_norm_ip(e.dst_ip))
+        except ValueError:
+            continue
+        # Same definition of "internal" as the privacy layer (is_global would also exclude TEST-NET).
+        if not (ip.is_loopback or ip.is_unspecified or any(ip in net for net in INTERNAL_NETS)):
+            hits.append(e)
+    if not hits:
+        return []
+    techniques = {_shell_technique(str(e.process).lower()) for e in hits}
+    techniques |= {"T1071.001" if e.dst_port in (80, 443, 8080, 8443) else "T1095" for e in hits}
+    return [
+        Finding(
+            rule="memory_suspicious_connection",
+            title="Shell or proxy binary connected to an external host",
+            severity="high",
+            techniques=sorted(techniques),
+            description="; ".join(
+                f"{e.process} ({e.fields.get('pid')}) -> {e.dst_ip}:{e.dst_port} {e.fields.get('state') or ''}".strip()
+                for e in hits[:5]
+            ),
+            evidence=hits[:6],
+            indicators={
+                "ip": sorted({str(e.dst_ip) for e in hits}),
+                "process": sorted({str(e.process) for e in hits}),
+            },
+        )
+    ]
+
+
 def run_all(events: list[Event]) -> list[Finding]:
     findings: list[Finding] = []
     for r in RULES:
         findings.extend(r(events))
-    findings.sort(key=lambda f: (-SEVERITY_ORDER[f.severity], f.first_seen or 0))
+    # Memory findings can have no timestamp at all (malfind, cmdline): sort those last.
+    findings.sort(
+        key=lambda f: (
+            -SEVERITY_ORDER[f.severity],
+            f.first_seen is None,
+            f.first_seen.timestamp() if f.first_seen else 0,
+        )
+    )
     return findings
