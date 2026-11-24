@@ -1,0 +1,15 @@
+# Base = air-gapped profile: local models only, no egress from the gateway.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: dfir-ai
+labels:
+  - pairs: { app.kubernetes.io/part-of: dfir-llm-assistant }
+resources:
+  - namespace.yaml
+  - ollama.yaml
+  - litellm.yaml
+  - networkpolicy.yaml
+configMapGenerator:
+  - name: litellm-config
+    files:
+      - config.yaml=litellm-config.yaml  # copy of deploy/litellm/config.local-only.yaml, kept in sync by tests

@@ -1,0 +1,26 @@
+# Air-gapped profile: only self-hosted models are exposed. Nothing can reach a cloud provider,
+# whatever the client asks for.
+model_list:
+  - model_name: dfir-local
+    litellm_params:
+      model: ollama_chat/qwen2.5:7b-instruct
+      api_base: os.environ/OLLAMA_API_BASE
+      keep_alive: 30m
+  - model_name: dfir-local-small
+    litellm_params:
+      model: ollama_chat/llama3.2:3b
+      api_base: os.environ/OLLAMA_API_BASE
+
+router_settings:
+  num_retries: 2
+  timeout: 300
+  fallbacks:
+    - dfir-local: [dfir-local-small]
+
+litellm_settings:
+  drop_params: true
+  request_timeout: 300
+  turn_off_message_logging: true
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY

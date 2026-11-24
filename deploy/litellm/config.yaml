@@ -1,0 +1,59 @@
+# LiteLLM gateway configuration (hybrid profile: local + cloud).
+#
+# Model aliases are the contract with the client:
+#   dfir-local*  -> self-hosted models (Ollama). Allowed for confidential cases.
+#   dfir-cloud   -> external providers. The client only uses it with --cloud, after pseudonymization.
+# The client keeps the list of local aliases in DFA_LOCAL_MODELS; the gateway enforces the
+# same split with per-team virtual keys (see README "Access control").
+#
+# Air-gapped deployments use config.local-only.yaml instead (no cloud alias at all).
+
+model_list:
+  # --- local, confidential ---------------------------------------------------
+  - model_name: dfir-local
+    litellm_params:
+      model: ollama_chat/qwen2.5:7b-instruct
+      api_base: os.environ/OLLAMA_API_BASE
+      keep_alive: 30m
+    model_info:
+      dfir_policy: local
+
+  - model_name: dfir-local-small        # fallback when the main local model is busy or missing
+    litellm_params:
+      model: ollama_chat/llama3.2:3b
+      api_base: os.environ/OLLAMA_API_BASE
+    model_info:
+      dfir_policy: local
+
+  # --- cloud, pseudonymized only -----------------------------------------------
+  - model_name: dfir-cloud
+    litellm_params:
+      model: anthropic/claude-sonnet-5-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+    model_info:
+      dfir_policy: cloud
+
+  - model_name: dfir-cloud-eu           # EU-hosted alternative
+    litellm_params:
+      model: mistral/mistral-large-latest
+      api_key: os.environ/MISTRAL_API_KEY
+    model_info:
+      dfir_policy: cloud
+
+router_settings:
+  routing_strategy: simple-shuffle
+  num_retries: 2
+  timeout: 300
+  # Fallbacks never cross the confidentiality boundary: local only falls back to local.
+  fallbacks:
+    - dfir-local: [dfir-local-small]
+    - dfir-cloud: [dfir-cloud-eu]
+
+litellm_settings:
+  drop_params: true          # e.g. response_format on models that do not support it
+  request_timeout: 300
+  # Do not ship prompts (investigation data) to any logging/observability callback.
+  turn_off_message_logging: true
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY

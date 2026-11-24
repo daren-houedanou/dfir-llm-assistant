@@ -1,0 +1,12 @@
+# Hybrid profile: adds cloud aliases (used only with --cloud, after pseudonymization)
+# and opens HTTPS egress for the gateway pods only.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+  - egress-cloud.yaml
+configMapGenerator:
+  - name: litellm-config
+    behavior: replace
+    files:
+      - config.yaml=litellm-config.yaml  # copy of deploy/litellm/config.yaml, kept in sync by tests

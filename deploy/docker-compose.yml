@@ -1,0 +1,72 @@
+# Local stack for development and demos:  docker compose -f deploy/docker-compose.yml up -d
+#
+#   ollama-pull   one-shot job: its own temporary Ollama server, with Internet access, downloads the
+#                 models into the shared volume, then exits
+#   ollama        self-hosted models (GPU optional), started after the pull, with no Internet access
+#   litellm       OpenAI-compatible gateway on http://localhost:4000
+#
+# Profile: set LITELLM_CONFIG=config.local-only.yaml for a strictly local gateway.
+
+name: dfir-llm
+
+services:
+  ollama:
+    image: ollama/ollama:0.12.6
+    depends_on:
+      ollama-pull: { condition: service_completed_successfully }
+    environment:
+      # Ollama's default context is 4096 tokens, which truncates dfa prompts (~6000 tokens by default).
+      OLLAMA_CONTEXT_LENGTH: ${OLLAMA_CONTEXT_LENGTH:-8192}
+    volumes:
+      - ollama:/root/.ollama
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      retries: 30
+    # Uncomment on a host with an NVIDIA GPU and the container toolkit:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices: [{ driver: nvidia, count: all, capabilities: [gpu] }]
+
+  ollama-pull:
+    # The download is done by the Ollama *server*, so the pull needs a server that can reach the
+    # Internet. Running a separate, short-lived one keeps the serving instance offline.
+    image: ollama/ollama:0.12.6
+    volumes:
+      - ollama:/root/.ollama
+    environment:
+      MODELS: ${DFA_PULL_MODELS:-qwen2.5:7b-instruct llama3.2:3b}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        ollama serve & sleep 3
+        for m in $$MODELS; do ollama pull "$$m" || exit 1; done
+    networks: [egress]
+    restart: "no"
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    command: ["--config", "/etc/litellm/${LITELLM_CONFIG:-config.yaml}", "--port", "4000"]
+    environment:
+      OLLAMA_API_BASE: http://ollama:11434
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:?set LITELLM_MASTER_KEY in deploy/.env}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+    volumes:
+      - ./litellm:/etc/litellm:ro
+    ports:
+      - "127.0.0.1:4000:4000"   # loopback only: the gateway is not exposed on the LAN
+    depends_on:
+      ollama: { condition: service_healthy }
+    networks: [internal, egress]
+
+volumes:
+  ollama:
+
+networks:
+  internal:
+    internal: true   # ollama has no route to the Internet
+  egress: {}
