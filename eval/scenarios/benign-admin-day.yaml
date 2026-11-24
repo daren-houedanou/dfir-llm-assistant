@@ -1,0 +1,13 @@
+name: benign-admin-day
+description: >
+  Control scenario. A normal working day on a file server: network logons, a few
+  password typos, a scheduled backup. A good assistant must not call it an intrusion.
+artifacts:
+  - ../../samples/benign-admin-day
+expected:
+  verdict: benign
+  techniques: []
+  iocs: []
+questions:
+  - q: Is there any evidence of compromise?
+    expect_any: ["no evidence", "no sign", "benign", "nothing detected", "no indication"]

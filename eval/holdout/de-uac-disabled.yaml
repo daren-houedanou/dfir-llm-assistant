@@ -1,0 +1,10 @@
+name: de-uac-disabled
+description: >
+  UAC disabled through the registry (Sysmon 12/13).
+  Source: sbousseaden/EVTX-ATTACK-SAMPLES, Defense Evasion/DE_UAC_Disabled_Sysmon_12_13.evtx
+artifacts:
+  - ../../data/holdout/DE_UAC_Disabled_Sysmon_12_13.jsonl
+expected:
+  verdict: malicious
+  techniques: [T1548.002]
+  iocs: []

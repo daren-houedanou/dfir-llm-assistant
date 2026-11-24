@@ -1,0 +1,9 @@
+# Files converted by scripts/fetch_public_datasets.sh (source path in EVTX-ATTACK-SAMPLES)
+Defense Evasion/DE_1102_security_log_cleared.evtx
+Defense Evasion/DE_104_system_log_cleared.evtx
+Defense Evasion/DE_Fake_ComputerAccount_4720.evtx
+Lateral Movement/LM_Remote_Service02_7045.evtx
+Persistence/Network_Service_Guest_added_to_admins_4732.evtx
+Credential Access/Powershell_4104_MiniDumpWriteDump_Lsass.evtx
+Credential Access/kerberos_pwd_spray_4771.evtx
+Lateral Movement/powercat_revShell_sysmon_1_3.evtx

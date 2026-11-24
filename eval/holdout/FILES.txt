@@ -1,0 +1,11 @@
+# Hold-out set: samples the detection rules were NOT written against (source path in EVTX-ATTACK-SAMPLES)
+Credential Access/sysmon_10_1_memdump_comsvcs_minidump.evtx
+Credential Access/CA_DCSync_4662.evtx
+Persistence/sysmon_local_account_creation_and_added_admingroup_12_13.evtx
+Lateral Movement/LM_wmiexec_impacket_sysmon_whoami.evtx
+Lateral Movement/LM_sysmon_psexec_smb_meterpreter.evtx
+Execution/temp_scheduled_task_4698_4699.evtx
+Defense Evasion/DE_UAC_Disabled_Sysmon_12_13.evtx
+Privilege Escalation/Sysmon_13_1_UAC_Bypass_EventVwrBypass.evtx
+Persistence/persistence_accessibility_features_osk_sysmon1.evtx
+Execution/exec_sysmon_lobin_regsvr32_sct.evtx

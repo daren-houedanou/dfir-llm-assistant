@@ -1,0 +1,13 @@
+name: network-c2-exfil
+description: >
+  Internal workstation beaconing over HTTPS every ~60s to an external host, followed
+  by data exfiltration through DNS TXT queries with long encoded subdomains.
+artifacts:
+  - ../../samples/network-c2-exfil
+expected:
+  verdict: malicious
+  techniques: [T1071.001, T1071.004, T1048]
+  iocs: [10.20.4.15, 192.0.2.77, cdn-sync.example]
+questions:
+  - q: Which internal host is compromised?
+    expect_any: [10.20.4.15]

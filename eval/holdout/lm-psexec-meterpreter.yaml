@@ -1,0 +1,10 @@
+name: lm-psexec-meterpreter
+description: >
+  PsExec-style service execution over SMB delivering Meterpreter (Sysmon).
+  Source: sbousseaden/EVTX-ATTACK-SAMPLES, Lateral Movement/LM_sysmon_psexec_smb_meterpreter.evtx
+artifacts:
+  - ../../data/holdout/LM_sysmon_psexec_smb_meterpreter.jsonl
+expected:
+  verdict: malicious
+  techniques: [T1569.002, T1021.002]
+  iocs: []

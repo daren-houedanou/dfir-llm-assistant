@@ -1,0 +1,10 @@
+name: lm-remote-service02-7045
+description: >
+  Services installed remotely on the target host (PsExec-like lateral movement).
+  Source: sbousseaden/EVTX-ATTACK-SAMPLES, Lateral Movement/LM_Remote_Service02_7045.evtx
+artifacts:
+  - ../../data/public/LM_Remote_Service02_7045.jsonl
+expected:
+  verdict: malicious
+  techniques: [T1543.003]
+  iocs: []

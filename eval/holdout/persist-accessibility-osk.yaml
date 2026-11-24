@@ -1,0 +1,10 @@
+name: persist-accessibility-osk
+description: >
+  Accessibility feature backdoor (osk.exe) (Sysmon 1).
+  Source: sbousseaden/EVTX-ATTACK-SAMPLES, Persistence/persistence_accessibility_features_osk_sysmon1.evtx
+artifacts:
+  - ../../data/holdout/persistence_accessibility_features_osk_sysmon1.jsonl
+expected:
+  verdict: malicious
+  techniques: [T1546.008]
+  iocs: []

@@ -1,0 +1,10 @@
+name: ca-dcsync-4662
+description: >
+  DCSync: directory replication rights used against a DC (4662).
+  Source: sbousseaden/EVTX-ATTACK-SAMPLES, Credential Access/CA_DCSync_4662.evtx
+artifacts:
+  - ../../data/holdout/CA_DCSync_4662.jsonl
+expected:
+  verdict: malicious
+  techniques: [T1003.006]
+  iocs: []

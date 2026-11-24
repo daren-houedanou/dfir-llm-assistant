@@ -1,0 +1,10 @@
+name: kerberos-pwd-spray-4771
+description: >
+  Kerberos pre-authentication password spray (4771) on a DC.
+  Source: sbousseaden/EVTX-ATTACK-SAMPLES, Credential Access/kerberos_pwd_spray_4771.evtx
+artifacts:
+  - ../../data/public/kerberos_pwd_spray_4771.jsonl
+expected:
+  verdict: malicious
+  techniques: [T1110.003]
+  iocs: []

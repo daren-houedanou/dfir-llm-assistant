@@ -1,0 +1,10 @@
+name: lm-wmiexec-impacket
+description: >
+  Impacket wmiexec remote execution running whoami (Sysmon).
+  Source: sbousseaden/EVTX-ATTACK-SAMPLES, Lateral Movement/LM_wmiexec_impacket_sysmon_whoami.evtx
+artifacts:
+  - ../../data/holdout/LM_wmiexec_impacket_sysmon_whoami.jsonl
+expected:
+  verdict: malicious
+  techniques: [T1047]
+  iocs: []

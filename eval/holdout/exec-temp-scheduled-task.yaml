@@ -1,0 +1,10 @@
+name: exec-temp-scheduled-task
+description: >
+  Scheduled task created then deleted (4698/4699).
+  Source: sbousseaden/EVTX-ATTACK-SAMPLES, Execution/temp_scheduled_task_4698_4699.evtx
+artifacts:
+  - ../../data/holdout/temp_scheduled_task_4698_4699.jsonl
+expected:
+  verdict: malicious
+  techniques: [T1053.005]
+  iocs: []

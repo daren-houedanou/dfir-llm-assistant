@@ -1,0 +1,10 @@
+name: ca-comsvcs-minidump-lsass
+description: >
+  LSASS memory dump with comsvcs.dll MiniDump (Sysmon 10/1).
+  Source: sbousseaden/EVTX-ATTACK-SAMPLES, Credential Access/sysmon_10_1_memdump_comsvcs_minidump.evtx
+artifacts:
+  - ../../data/holdout/sysmon_10_1_memdump_comsvcs_minidump.jsonl
+expected:
+  verdict: malicious
+  techniques: [T1003.001]
+  iocs: []

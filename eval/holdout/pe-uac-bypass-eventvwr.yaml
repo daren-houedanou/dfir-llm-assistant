@@ -1,0 +1,10 @@
+name: pe-uac-bypass-eventvwr
+description: >
+  UAC bypass through eventvwr.exe registry hijack (Sysmon 13/1).
+  Source: sbousseaden/EVTX-ATTACK-SAMPLES, Privilege Escalation/Sysmon_13_1_UAC_Bypass_EventVwrBypass.evtx
+artifacts:
+  - ../../data/holdout/Sysmon_13_1_UAC_Bypass_EventVwrBypass.jsonl
+expected:
+  verdict: malicious
+  techniques: [T1548.002]
+  iocs: []
